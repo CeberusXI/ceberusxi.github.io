@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fight Camp 13</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: floor-tape motif. A 13-week tape measure across the top, section heads with tick marks, tabs as a scrolling strip. */
+:root{
+ --bg:#EFF1EC; --panel:#FFFFFF; --wash:#E4E8E1; --ink:#13191D; --dim:#566069; --faint:#7C858D; --line:#D0D6CE;
+ --accent:#1D4ED8; --accent-ink:#FFFFFF; --tape:#E0A800; --tape-ink:#2A2000;
+ --ok:#1B7A48; --warn:#9A5A0B; --bad:#B02A24;
+ --disp:'Big Shoulders Display','Arial Narrow',Impact,sans-serif;
+ --body:'Public Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+ --mono:'DM Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){
+  --bg:#0D1217; --panel:#151C23; --wash:#1B242D; --ink:#E7EBEE; --dim:#9AA5AE; --faint:#6E7A84; --line:#25303A;
+  --accent:#7FA2FF; --accent-ink:#0A1226; --tape:#F2C230; --tape-ink:#231A00;
+  --ok:#5BC48C; --warn:#E3A24A; --bad:#EE7B73; color-scheme:dark;
+ }
+}
+:root[data-theme="dark"]{
+ --bg:#0D1217; --panel:#151C23; --wash:#1B242D; --ink:#E7EBEE; --dim:#9AA5AE; --faint:#6E7A84; --line:#25303A;
+ --accent:#7FA2FF; --accent-ink:#0A1226; --tape:#F2C230; --tape-ink:#231A00;
+ --ok:#5BC48C; --warn:#E3A24A; --bad:#EE7B73; color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:800;letter-spacing:.01em;line-height:1.05;margin:0;text-wrap:balance}
+p{margin:0}
+.app{max-width:880px;margin:0 auto;padding:0 16px 64px}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-block:18px 10px}
+.brand{font-family:var(--disp);font-weight:800;font-size:34px;letter-spacing:.02em;text-transform:uppercase;line-height:.9}
+.brand small{display:block;font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.06em;color:var(--dim);margin-top:6px;text-transform:none}
+.themebtn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 10px;font-family:var(--mono);font-size:11px;cursor:pointer}
+.tape{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;margin-block:6px 4px}
+.seg{height:14px;background:var(--wash);border:1px solid var(--line);position:relative}
+.seg.done{background:var(--ink);border-color:var(--ink)}
+.seg.cur{background:var(--tape);border-color:var(--tape)}
+.seg.test::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 3px,var(--tape-ink) 3px 4px);opacity:.55}
+.seg.p1{border-bottom-width:3px}
+.tapelbl{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;font-family:var(--mono);font-size:9.5px;color:var(--faint);text-align:center}
+.tapemeta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:8px}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);display:flex;overflow-x:auto;gap:2px;border-bottom:1px solid var(--line);margin-top:10px;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;border:0;background:transparent;padding:11px 12px 9px;font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:.03em;text-transform:uppercase;color:var(--dim);cursor:pointer;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--tape)}
+main{padding-top:20px;display:flex;flex-direction:column;gap:30px}
+.sec{display:flex;flex-direction:column;gap:12px;min-width:0}
+.sec>h2{font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.sec>h2::after{content:"";flex:1;height:7px;background:repeating-linear-gradient(90deg,var(--tape) 0 2px,transparent 2px 10px);opacity:.85;min-width:20px}
+.sec>h3{font-size:19px;text-transform:uppercase;color:var(--ink)}
+.dim{color:var(--dim)} .mono{font-family:var(--mono)}
+.lead{color:var(--dim);max-width:68ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:9px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);min-width:0}
+th{font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);background:var(--wash);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.nw{white-space:nowrap}
+tr.hl td{background:color-mix(in srgb,var(--tape) 16%,transparent)}
+.minw{min-width:720px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:9px 14px;cursor:pointer;font-weight:600}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.tape{background:var(--tape);border-color:var(--tape);color:var(--tape-ink);font-family:var(--disp);font-weight:800;font-size:17px;letter-spacing:.04em;text-transform:uppercase}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.ghost{background:transparent;color:var(--dim)}
+.btn:focus-visible,nav.tabs button:focus-visible,.ck:focus-visible,.chip:focus-visible,.themebtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tg{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.05em;padding:2px 7px;border-radius:4px;border:1px solid currentColor;margin-top:4px;background:color-mix(in srgb,currentColor 10%,transparent)}
+.tg-s{color:var(--ok)} .tg-m{color:var(--accent)} .tg-p{color:var(--warn)} .tg-c{color:var(--bad)} .tg-g{color:var(--faint)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;padding:3px 8px;border-radius:99px;background:var(--wash);color:var(--dim)}
+.pill.tp{background:var(--tape);color:var(--tape-ink)}
+.hero{display:flex;flex-direction:column;gap:6px}
+.hero .day{font-family:var(--disp);font-weight:800;font-size:56px;line-height:.9;text-transform:uppercase}
+.hero .day span{color:var(--faint);font-size:24px}
+.sess{display:flex;flex-direction:column;gap:4px}
+.blk{margin-top:18px}
+.blk h4{font-size:14px;font-family:var(--mono);font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);padding-bottom:6px;border-bottom:1px solid var(--line)}
+.blk.opt h4{color:var(--warn)}
+.ex{border-bottom:1px solid var(--line)}
+.ex-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0}
+.ck{flex:0 0 auto;width:26px;height:26px;border-radius:6px;border:2px solid var(--faint);background:transparent;color:transparent;cursor:pointer;font-weight:800;line-height:1;margin-top:2px}
+.ck.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.ex-main{flex:1;min-width:0}
+.ex-name{font-weight:600}
+.ex-name.dn{color:var(--dim);text-decoration:line-through}
+.ex-spec{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.ex-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ex-cue{display:none;padding:0 0 12px 38px;color:var(--dim);font-size:13.5px}
+.ex-cue.open,.ex-cue.static{display:block}
+.ex-cue.static{padding-left:0;font-size:13px}
+.ex.static .ex-row{padding-bottom:4px}
+.bar{height:6px;background:var(--wash);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok)}
+.rdy{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.rdy label,.fld label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim)}
+select,input[type=number],input[type=text],textarea{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 9px;width:100%;min-width:0}
+textarea{min-height:64px;resize:vertical}
+.st{padding:12px 14px;border-radius:8px;border:1px solid currentColor;background:color-mix(in srgb,currentColor 9%,transparent)}
+.st b{font-family:var(--disp);font-size:22px;letter-spacing:.04em}
+.st.GREEN{color:var(--ok)} .st.YELLOW{color:var(--warn)} .st.RED{color:var(--bad)}
+.st p{color:var(--ink);font-size:13.5px;margin-top:4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 10px;cursor:pointer;font-family:var(--mono);font-size:12px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.t{border-color:var(--tape)}
+.rpe{display:flex;gap:4px;flex-wrap:wrap}
+.rpe button{width:34px;height:34px;border-radius:6px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-family:var(--mono)}
+.rpe button[aria-pressed="true"]{background:var(--tape);color:var(--tape-ink);border-color:var(--tape);font-weight:700}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .c{aspect-ratio:1.25;max-width:100%;border:1px solid var(--line);border-radius:4px;background:var(--wash);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--faint)}
+.cal .c.d{background:var(--ok);border-color:var(--ok);color:#fff}
+.cal .c.n{outline:2px solid var(--tape);outline-offset:1px;color:var(--ink)}
+.cal .wl{grid-column:1/-1;font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.stat b{display:block;font-family:var(--disp);font-size:34px;line-height:1}
+.stat span{font-size:11.5px;color:var(--dim)}
+.bars{display:flex;align-items:flex-end;gap:3px;height:70px}
+.bars div{flex:1;background:var(--wash);display:flex;align-items:flex-end;height:100%}
+.bars div i{display:block;width:100%;background:var(--accent)}
+.bars div.dl i{background:var(--tape)}
+details.day{border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+details.day>summary{cursor:pointer;padding:12px 14px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;list-style:none}
+details.day>summary::-webkit-details-marker{display:none}
+details.day>summary b{font-family:var(--disp);font-size:20px;text-transform:uppercase}
+details.day .inner{padding:0 14px 14px}
+details.day>summary:focus-visible{outline:2px solid var(--accent)}
+.skill{border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.skill>summary{cursor:pointer;padding:11px 14px;font-family:var(--disp);font-weight:800;font-size:19px;text-transform:uppercase;list-style:none}
+.skill>summary::-webkit-details-marker{display:none}
+.skill .st4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.skill .st4 div{background:var(--panel);padding:10px 14px;font-size:13px}
+.skill .st4 b{display:block;font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.tin{width:78px;padding:6px 7px;font-family:var(--mono)}
+.fld{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fld .wide{grid-column:1/-1}
+ol.rules{margin:0;padding-left:0;list-style:none;counter-reset:r;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px}
+ol.rules li{counter-increment:r;display:flex;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+ol.rules li::before{content:counter(r);font-family:var(--disp);font-weight:800;font-size:24px;line-height:1;color:var(--tape);min-width:26px}
+#tmOv{display:none;position:fixed;inset:0;z-index:60;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--bg);overflow-y:auto}
+#tmOv.open{display:flex}
+#tmOv.work{background:color-mix(in srgb,var(--ok) 22%,var(--bg))}
+#tmOv.rest{background:color-mix(in srgb,var(--accent) 20%,var(--bg))}
+#tmOv.ready{background:color-mix(in srgb,var(--tape) 22%,var(--bg))}
+.tm-name{color:var(--dim);font-size:14px;max-width:34ch}
+.tm-phase{font-family:var(--disp);font-weight:800;font-size:34px;letter-spacing:.08em;margin-top:10px}
+.tm-clock{font-family:var(--disp);font-weight:800;font-size:min(34vw,160px);line-height:1;margin:6px 0;font-variant-numeric:tabular-nums}
+.tm-cue{font-family:var(--disp);font-weight:800;font-size:min(11vw,52px);line-height:1.05;min-height:2.2em;max-width:16ch;text-transform:uppercase}
+.tm-map{font-size:12.5px;color:var(--dim);max-width:46ch;margin-top:6px}
+.tm-ctrl{display:flex;gap:10px;margin-top:22px;width:100%;max-width:400px}
+.tm-ctrl button{flex:1;height:54px}
+.flag{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-200%);background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:99px;z-index:70;transition:transform .3s}
+.flag.show{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.flag{transition:none}}
+@media (max-width:520px){.brand{font-size:28px}.hero .day{font-size:46px}.ex-row{flex-wrap:wrap}.ex-btns{width:100%;justify-content:flex-start;padding-left:38px}}
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0D1217">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<div class="app">
+ <header class="top">
+  <div class="brand">Fight Camp 13<small>13 weeks · home · solo · no bags, pads or partners</small></div>
+  <button class="themebtn" id="themeBtn" type="button">Theme: auto</button>
+ </header>
+ <div id="tapeWrap"></div>
+ <nav class="tabs" id="tabs" role="tablist" aria-label="Sections"></nav>
+ <main id="view"></main>
+</div>
+<div id="tmOv" role="dialog" aria-label="Round timer">
+ <div class="tm-name" id="tmName"></div>
+ <div class="tm-phase" id="tmPhase"></div>
+ <div class="tm-clock" id="tmClock"></div>
+ <div id="tmRound" class="dim mono"></div>
+ <div class="tm-cue" id="tmCue"></div>
+ <div class="tm-map" id="tmMap"></div>
+ <div class="tm-ctrl"><button class="btn" id="tmRestart" type="button">Restart</button><button class="btn pri" id="tmPause" type="button">Pause</button><button class="btn" id="tmSkip" type="button">Skip</button></div>
+ <div class="row" style="margin-top:14px;justify-content:center"><button class="btn sm ghost" id="tmSnd" type="button">Sound: on</button><button class="btn sm ghost" id="tmVoice" type="button">Voice: on</button><button class="btn sm ghost" id="tmClose" type="button">Close timer</button></div>
+</div>
+<div class="flag" id="flag" role="status">Saved</div>
+
+<script>
+(function(){
+'use strict';
+const TG={s:"SOLO — HOME",m:"MINIMAL EQUIPMENT — HOME",p:"PARTNER REQUIRED",c:"COACH REQUIRED",g:"GYM OPTIONAL"};
+const PHN=["Foundation","Development","Intensification","Integration"];
+const PHW=["Weeks 1–3 + deload 4","Weeks 5–7 + deload 8","Weeks 9–11 + deload 12","Week 13"];
+const TESTW=[1,4,8,12,13];
+
+const CUES={
+ choice:{n:"A / B choice",list:["A","B"],map:"Before the round decide: A = one attack, B = a different attack. Commit within one second of the call."},
+ choice3:{n:"A / B / C choice",list:["A","B","C"],map:"Before the round decide three different answers. Commit within one second of the call."},
+ defence:{n:"Defence only",list:["RED · parry","BLUE · slip","GREEN · cover","YELLOW · check","WHITE · pivot out"],map:"RED parry. BLUE slip. GREEN cover. YELLOW lift the shin check. WHITE pivot out. Choose your own counter."},
+ defc:{n:"Defence + counter",list:["RED · parry + cross","BLUE · slip + hook","GREEN · cover + low kick","YELLOW · check + cross","WHITE · pivot out + reset"],map:"RED parry then cross. BLUE slip then lead hook. GREEN cover then low kick. YELLOW check then cross. WHITE pivot out and reset."},
+ dca:{n:"Defence, counter, angle",list:["RED · parry, cross, step out","BLUE · slip, hook, pivot left","GREEN · cover, low kick, pivot right","YELLOW · check, cross, exit 45°","WHITE · pivot out, reset"],map:"Each colour is a three-step answer: defend, counter, then change your angle. Finish every sequence on a new line."},
+ fcc:{n:"Feint, reaction, counter",list:["FEINT · he covers → body kick","FEINT · he steps back → teep","FEINT · he steps in → pivot and counter","FEINT · he counters → parry and cross","FEINT · he freezes → 1-2-low kick"],map:"Throw a real feint, imagine the reaction named, and punish it with the answer shown."},
+ range:{n:"Range calls",list:["LONG · teeps and kicks","MID · punches","CLOSE · knees and short shots","BREAK · step out"],map:"Match your offence to the range called. BREAK means leave on an angle."},
+ opp:{n:"Opponent style",list:["PRESSURE · walks you down","COUNTER-PUNCHER · waits","KICKER · stays long","CLINCHER · grabs and smothers","RETREATER · steps back"],map:"Imagine that opponent for as long as the call stands. Change your plan within 2 seconds."},
+ press:{n:"Pressure scenarios",list:["PRESSURE · he walks you down","PRESSURE · he throws jab-cross","PRESSURE · he kicks low","PRESSURE · he clinches","PRESSURE · he feints, then steps in"],map:"You are being pressured. Hold your ground, defend, pivot out and counter. Never retreat in a straight line."},
+ retreat:{n:"Retreating opponent",list:["HE BACKS STRAIGHT · cut the angle","HE CIRCLES LEFT · cut him off","HE CIRCLES RIGHT · cut him off","HE HITS THE CORNER · finish","HE COUNTERS · defend, then re-cut"],map:"You are the hunter. Cut the ring with small steps and strike when he runs out of room."},
+ fat:{n:"Fatigue management",list:["FATIGUE · hands up, long exhale","BURST · 6 s clean and fast","SLOW · drop to RPE 5, keep guard","PRESSURE · hold your ground, pivot","RESET · breathe, plan, go"],map:"Obey each call at once. The goal is clean technique and a clear decision while you are tired."},
+ tempo:{n:"Burst / cruise",list:["BURST","CRUISE"],map:"BURST = 6 seconds near-max with clean form. CRUISE = technical flow at RPE 5–6."},
+ entry:{n:"Footwork calls",list:["ENTER","EXIT","ANGLE LEFT","ANGLE RIGHT","PIVOT"],map:"Move on the call, then throw one strike from the new position."},
+ plan:{n:"Game plan",list:["PLAN A · pressure","PLAN B · range kicks","SWITCH PLAN","MISTAKE · reset breath","FATIGUE · hands up, breathe"],map:"Run your chosen plan. Obey every call at once."},
+ jdir:{n:"Jump direction",list:["JUMP FORWARD · stick","JUMP LEFT · stick","JUMP RIGHT · stick","JUMP BACK · stick"],map:"Jump on the call and freeze the landing for 2 s. If you wobble, rest longer before the next one."}
+};
+
+const WARM={
+ mon:["Bounce and ankle hops|3:00|s|Light bounce on the balls of the feet.","Hip circles, leg swings, thoracic rotations|2:00|s|10 each direction. Build range gradually.","Slow shadow round, jab only, then add slow kick chambers|1 × 2:00 at RPE 3|s|Move your feet, keep the guard up."],
+ tue:["Glute bridge, bird-dog, bodyweight squat|2 × 8|s|Wake up hips and trunk before loaded work.","Ramp-up sets of the first two lifts|1 × 6 each at half load|m|Rehearse A1 and B1 light. No grinding in the first set."],
+ wed:["Footwork warm-up: shuffle, skip, pivot|3:00|s|Stay light. Feet never cross.","Slow shadow round with exits and parries|1 × 2:00 at RPE 3|s|Jab, step off the line, parry the imagined return."],
+ thu:["Easy walk or cycle|15:00 at RPE 2|s|Nose-breathing pace. This is the recovery stimulus. Do not turn it into a workout."],
+ fri:["Ankle bounces, A-skips, pogo hops|3:00|s|Springy ankles, quiet landings.","Two practice jumps at 70 percent|2 reps|s|Land softly, knees tracking over toes.","Shadow round, build to RPE 5|1 × 2:00|s|Speed up over the last 30 s."],
+ sat:["Mobility flow and light bounce|4:00|s|Hips, ankles, thoracic spine.","Shadow rounds building RPE 3 to 5|2 × 2:00|s|Slow in round one, match speed by the end of round two."],
+ sun:["Easy walk|20–30 min at RPE 2|s|Outdoors if possible. Easy enough to hold a conversation."]
+};
+const COOL={
+ mon:"Easy walk, then hip-flexor, hamstring, calf and adductor stretch|6:00|s|Gentle, no pain. Exhale slowly.",
+ tue:"Easy walk, then calf, quad, glute and chest stretch|8:00|s|Loaded single-leg work leaves calves and hips tight. Walk until you can nose-breathe.",
+ wed:"Easy walk, then hip and ankle mobility|6:00|s|Footwork volume shows up in the ankles first.",
+ thu:"Gentle breathing, 4 s in, 6 s out|4:00|s|Lie on your back, legs on a chair if comfortable.",
+ fri:"Slow walk until breathing settles, then stretch|10:00|s|Keep walking until you can nose-breathe. Then hips, calves, shoulders.",
+ sat:"Walk, stretch, then watch your filmed rounds|8:00|s|Replay is in the scenario block. This is the cool-down for the body.",
+ sun:"Prepare next week|10:00|s|Charge the phone, clear the floor space, lay out the range lines, choose a film clip for Thursday."
+};
+
+const MOB=[
+ ["90/90 hip switches|2 × 8|s|Sit with both knees at 90°, rotate to the other side without using your hands if you can.","Deep squat hold, heels flat|3 × 45 s|s|Hips below knees, chest up. Hold a doorframe if you need balance.","Half-kneeling hip-flexor stretch|2 × 60 s per side|s|Back knee on a folded towel, squeeze the back glute, ribs down.","Thread-the-needle|2 × 8 per side|s|Thoracic rotation: reach under, then open the arm to the ceiling.","Ankle knee-to-wall rocks|2 × 10 per side|s|Heel stays down. Ankle range protects knees on every kick pivot.","Hamstring floss with a towel|2 × 10 per side|s|Straight leg, towel round the foot, slow lift and lower."],
+ ["90/90 hip switches with lift-off|2 × 8|s|Lift the back knee off the floor for one second on each rep.","Cossack squat holds|2 × 30 s per side|s|Sit into one hip, other leg straight, toes up.","Active straight-leg raise at the wall|2 × 5 × 5 s per side|s|Lift without momentum and hold. This is kick height under control.","Butterfly and pancake, gentle|2 × 90 s|s|Hinge from the hips with a flat back. No bouncing.","Adductor rock-backs|2 × 10|s|On all fours, one leg out to the side, rock back toward the heel.","Thread-the-needle with reach|2 × 8 per side|s|Lengthen on every exhale."],
+ ["Loaded 90/90, 10 s push then relax|3 rounds per side|s|Press the shin into the floor for 10 s, relax, sink deeper.","Dynamic leg swings, front and side|20 per side|s|Swing freely but controlled. Tall posture.","Pancake with contract-relax|3 × 40 s|s|Contract the legs for 10 s, relax, hinge further.","Kick-chamber holds at height|6 × 5 s per side|s|Hold the chamber with the hip turned. No bouncing.","Thoracic extension over a chair back|2 × 10|m|Lock hands behind your head and extend over the chair back. Chair against a wall.","Half-kneeling hip-flexor stretch with glute squeeze|2 × 45 s per side|s|Squeeze the back glute to deepen the stretch."],
+ ["90/90 hip switches|2 × 8|s|Maintenance dose. Smooth, no force.","Deep squat hold|2 × 45 s|s|Heels flat.","Active straight-leg raise|2 × 5 × 5 s per side|s|Check you still own your range.","Thread-the-needle|2 × 8 per side|s|Open the chest.","Ankle rocks|2 × 10 per side|s|Keep the heel down."]
+];
+
+/* ---------- strength families (Tuesday). Tuple: [name, sets, reps, tempo, pack load, RIR, extra, unit] ---------- */
+const FAMS=[
+{k:"squat",lab:"A1",c:"Hold the pack at your chest, feet shoulder-width, heels down, knees tracking over toes. Stop every set with the RIR shown: no grinding and no failure. Load levels L1–L4 are defined in the Plan tab. Pair A1 with A2, B1 with B2 and C1 with C2, resting 60–75 s between the two and 90 s after each pair.",
+ vn:{"Paused backpack squat":"Pause in the bottom for the time shown in the tempo (middle number). Stay tight, do not relax into the hips.","1.5-rep backpack squat":"Down to the bottom, up halfway, down again, then all the way up. That is one rep.","Slow-lowering backpack squat":"Five full seconds down, a 1 s pause, drive up.","Assisted shrimp squat to a towel":"Stand on one leg, hold a doorframe or chair back for balance, lower until your back knee touches a folded towel. Use the support as little as you can.","Shrimp squat to a towel, pack at chest":"Same pattern, pack at the chest, support only if you have to.","Shrimp squat, paused":"Pause with the back knee just above the towel, then drive up. Keep the support light."},
+ w:[["Backpack squat",3,10,"3-1-1","L2",3],["Backpack squat",4,8,"3-1-1","L3",2],["Paused backpack squat",4,6,"3-2-1","L3",2],["Backpack squat",2,6,"2-0-1","L2",4],
+    ["Paused backpack squat",4,6,"3-3-1","L4",2],["1.5-rep backpack squat",4,5,"3-1-1","L4",2],["Slow-lowering backpack squat",4,5,"5-1-1","L4","1–2"],["Backpack squat",2,5,"2-0-1","L3",4],
+    ["Assisted shrimp squat to a towel",4,5,"3-1-1","BW",2,"","leg"],["Shrimp squat to a towel, pack at chest",4,5,"3-1-1","L2",2,"Drop on the last set: 6 rear-foot-elevated split squats at L2, 2-0-X","leg"],["Shrimp squat, paused",4,5,"4-2-1","L2","1–2","Drop on the last set: 6 backpack squats at L3, 2-0-X","leg"],["Backpack squat",2,5,"2-0-1","L3",4],
+    ["Backpack squat",2,4,"2-0-X","L3",4]]},
+{k:"pull",lab:"A2",c:"Lie under a sturdy table and grip the edge. Body straight from heels to head, pull your chest to the table edge, shoulder blades back. Test the table first: lean on it hard and make sure it cannot slide, tip or flex. Place it against a wall if you can.",
+ vn:{"Loaded table row (pack on chest)":"Rest the pack on your chest and hold it there with your forearms. Keep the body straight.","Loaded table row, 2-s top pause":"Hold the top position for the time in the tempo (middle number).","Feet-elevated table row":"Put your heels on a chair that is against a wall. Body stays in one line. Harder leverage.","Feet-elevated table row, 2-s top pause":"Feet on the chair, 2 s hold at the top.","Feet-elevated loaded table row":"Feet on the chair and pack on your chest.","Feet-elevated loaded table row, 2-s pause":"Feet up, pack on, 2 s hold at the top, 4 s lowering.","Feet-elevated loaded table row, 4-s lowering":"Feet up, pack on, 4 s lowering. On the last set, drop to the flat-feet row for 8 quick reps if the extra line says so.","Feet-elevated loaded table row, 5-s lowering":"Feet up, pack on, 5 s lowering."},
+ w:[["Table row",4,10,"3-1-1","BW",3],["Loaded table row (pack on chest)",4,8,"3-1-1","L2",2],["Loaded table row, 2-s top pause",4,8,"3-2-1","L2",2],["Table row",2,8,"2-0-1","BW",4],
+    ["Feet-elevated table row",4,8,"3-1-1","BW",2],["Feet-elevated table row, 2-s top pause",4,8,"3-2-1","BW",2],["Feet-elevated loaded table row",4,6,"3-1-1","L2",2],["Feet-elevated table row",2,6,"2-0-1","BW",4],
+    ["Feet-elevated loaded table row, 2-s pause",4,6,"4-2-1","L2","1–2"],["Feet-elevated loaded table row, 4-s lowering",4,6,"4-2-1","L3","1–2","Drop on the last set: 8 flat-feet table rows, 2-0-X"],["Feet-elevated loaded table row, 5-s lowering",4,5,"5-2-1","L3","1–2","Drop on the last set: 8 flat-feet table rows, 2-0-X"],["Feet-elevated table row",2,5,"2-0-1","BW",4],
+    ["Feet-elevated table row",2,5,"2-0-X","BW",4]]},
+{k:"split",lab:"B1",c:"Front shin vertical, drop straight down, front knee tracks over the toes, trunk tall. Pack held at the chest. Stop with the RIR shown. Chair for the rear foot sits against a wall and never rolls.",
+ vn:{"Loaded split squat, deep range":"Touch your back knee to a folded towel on every rep. Deeper range, same control.","Rear-foot-elevated split squat":"Rear foot on the seat of a chair against a wall, laces down. Hold a doorframe if you need balance.","Rear-foot-elevated split squat, paused":"Pause 2 s in the bottom position, trunk tall.","Rear-foot-elevated split squat, 5-s lowering":"Five seconds down, 1 s pause, drive up.","Rear-foot-elevated split squat, 1.5 reps":"Down, halfway up, down again, then all the way up. That is one rep."},
+ w:[["Loaded split squat",3,8,"3-1-1","L2",3,"","leg"],["Loaded split squat",4,8,"3-1-1","L3",2,"","leg"],["Loaded split squat, deep range",4,6,"3-2-1","L3",2,"","leg"],["Loaded split squat",2,6,"2-0-1","L2",4,"","leg"],
+    ["Rear-foot-elevated split squat",4,8,"3-1-1","L2",3,"","leg"],["Rear-foot-elevated split squat",4,6,"3-1-1","L3",2,"","leg"],["Rear-foot-elevated split squat, paused",4,6,"3-2-1","L3",2,"","leg"],["Rear-foot-elevated split squat",2,6,"2-0-1","L3",4,"","leg"],
+    ["Rear-foot-elevated split squat, paused",4,6,"3-2-1","L4",2,"","leg"],["Rear-foot-elevated split squat, 5-s lowering",4,5,"5-1-1","L4","1–2","Drop on the last set: 6 reps at L2, then 6 bodyweight reps, 2-0-X","leg"],["Rear-foot-elevated split squat, 1.5 reps",4,5,"4-1-1","L4","1–2","Drop on the last set: 6 reps at L2, then 6 bodyweight reps, 2-0-X","leg"],["Rear-foot-elevated split squat",2,6,"2-0-1","L3",4,"","leg"],
+    ["Rear-foot-elevated split squat",2,5,"2-0-X","L3",4,"","leg"]]},
+{k:"push",lab:"B2",c:"Body in one line, hands under shoulders, chest to the floor, no sag in the hips. Stop with the RIR shown, not at failure. Chair for decline and pike variations sits against a wall.",
+ vn:{"Paused tempo push-up":"Pause 2 s with your chest just above the floor.","Decline push-up (feet on chair)":"Feet on a chair against a wall. Body in one line.","Decline push-up, pack on back":"Feet on the chair, pack worn on your back, straps tight.","Pike push-up (feet on chair)":"Feet on the chair, hips high, lower the top of your head toward the floor between your hands. Vertical press. On the last set, drop to 8 decline push-ups if the extra line says so.","Pike push-up, 4-s lowering":"Same pike position, four seconds down. Drop to 8 decline push-ups on the last set.","Archer push-up":"Hands wide. Lower toward one hand while the other arm stays long, then press back and alternate sides.","Archer push-up, 4-s lowering":"Four seconds down toward one hand, other arm long. Drop to 8 decline push-ups on the last set.","Archer push-up, paused at the bottom":"Pause 2 s at the bottom of each rep. Drop to 8 decline push-ups on the last set."},
+ w:[["Tempo push-up",4,10,"3-1-1","BW",3],["Paused tempo push-up",4,10,"3-2-1","BW",2],["Decline push-up (feet on chair)",4,8,"3-1-1","BW",2],["Tempo push-up",2,8,"2-0-1","BW",4],
+    ["Decline push-up, pack on back",4,8,"3-1-1","L2",2],["Pike push-up (feet on chair)",4,6,"3-1-1","BW",2,"Drop on the last set: 8 decline push-ups, 2-0-X"],["Pike push-up, 4-s lowering",4,6,"4-1-1","BW",2,"Drop on the last set: 8 decline push-ups, 2-0-X"],["Decline push-up (feet on chair)",2,6,"2-0-1","BW",4],
+    ["Archer push-up",4,5,"3-1-1","BW",2,"","side"],["Archer push-up, 4-s lowering",4,5,"4-1-1","BW",2,"Drop on the last set: 8 decline push-ups, 2-0-X","side"],["Archer push-up, paused at the bottom",4,5,"4-2-1","BW","1–2","Drop on the last set: 8 decline push-ups, 2-0-X","side"],["Archer push-up",2,4,"2-0-1","BW",4,"","side"],
+    ["Archer push-up",2,4,"2-0-X","BW",4,"","side"]]},
+{k:"hinge",lab:"C1",c:"Stand on one leg with a soft knee, pack held at the chest. Push your hips back, flat back, free leg long behind you, then drive the hips forward. Keep the hips square to the floor. Touch down with the free foot if you lose balance and reset.",
+ vn:{"Single-leg RDL, 4-s lowering":"Four seconds down, no pause, drive up.","Single-leg RDL, 4-s lowering, paused":"Four seconds down, 2 s pause at the bottom, drive up.","Single-leg RDL, 5-s lowering, paused":"Five seconds down, 2 s pause, drive up.","Single-leg RDL, 6-s lowering, paused":"Six seconds down, 2 s pause, drive up. On the last set, drop to 6 two-leg backpack RDLs if the extra line says so."},
+ w:[["Loaded single-leg RDL",3,8,"3-1-1","L1",3,"","leg"],["Loaded single-leg RDL",4,8,"3-1-1","L2",2,"","leg"],["Loaded single-leg RDL",3,6,"3-2-1","L2",2,"","leg"],["Loaded single-leg RDL",2,6,"2-0-1","L1",4,"","leg"],
+    ["Single-leg RDL, 4-s lowering",3,6,"4-1-1","L2",2,"","leg"],["Single-leg RDL, 4-s lowering, paused",3,6,"4-2-1","L3",2,"","leg"],["Single-leg RDL, 5-s lowering, paused",3,5,"5-2-1","L3","1–2","","leg"],["Single-leg RDL, 4-s lowering",2,5,"4-0-1","L2",4,"","leg"],
+    ["Single-leg RDL, 5-s lowering, paused",4,5,"5-2-1","L4","1–2","","leg"],["Single-leg RDL, 5-s lowering, paused",4,5,"5-2-1","L4","1–2","Drop on the last set: 6 two-leg backpack RDLs at L4, 2-0-X","leg"],["Single-leg RDL, 6-s lowering, paused",4,5,"6-2-1","L4","1–2","Drop on the last set: 6 two-leg backpack RDLs at L4, 2-0-X","leg"],["Single-leg RDL, 4-s lowering",2,5,"4-0-1","L2",4,"","leg"],
+    ["Single-leg RDL, 4-s lowering",2,4,"4-0-1","L2",4,"","leg"]]},
+{k:"deadbug",lab:"C2",c:"Lie on your back, low back pressed into the floor the whole time. Move the opposite arm and leg slowly and stop if your back arches. Quality beats range.",
+ vn:{"Dead bug, straight-leg lowering":"Keep the lowering leg straight.","Dead bug, arms overhead":"Both arms reach overhead and stay long while the legs move.","Extended-lever dead bug":"Arms and legs both reach long. Lower the opposite pair together without arching.","Extended-lever dead bug, pack held overhead":"Hold the pack overhead with both hands while the legs lower. Pack stays above the chest line.","Loaded extended-lever dead bug, 5-s lowering":"Pack held overhead, five seconds on every lowering.","Loaded extended-lever dead bug, 6-s lowering":"Pack held overhead, six seconds on every lowering.","Loaded extended-lever dead bug, 2-s bottom hold":"Pack held overhead, six seconds lowering and a 2 s hold at the bottom."},
+ w:[["Dead bug",3,8,"4-1-4","BW","","","side"],["Dead bug, straight-leg lowering",3,8,"4-1-4","BW","","","side"],["Dead bug, arms overhead",3,8,"4-1-4","BW","","","side"],["Dead bug",2,6,"3-0-3","BW","","","side"],
+    ["Extended-lever dead bug",3,8,"5-1-4","BW","","","side"],["Extended-lever dead bug, pack held overhead",3,8,"5-1-4","L1","","","side"],["Loaded extended-lever dead bug, 5-s lowering",3,6,"5-1-4","L2","","","side"],["Extended-lever dead bug",2,6,"4-0-3","BW","","","side"],
+    ["Loaded extended-lever dead bug, 5-s lowering",3,6,"5-1-4","L2","","","side"],["Loaded extended-lever dead bug, 6-s lowering",3,6,"6-1-4","L2","","","side"],["Loaded extended-lever dead bug, 2-s bottom hold",3,6,"6-2-4","L2","","","side"],["Extended-lever dead bug",2,5,"4-0-3","BW","","","side"],
+    ["Extended-lever dead bug",2,5,"4-0-3","BW","","","side"]]},
+{k:"anti",lab:"D",c:"Brace the trunk like you are about to be hit. Hips do not sag, hips do not rotate. Stop the set when your form goes, not when you are tired.",
+ vn:{"Side plank with reach-through":"From a side plank, thread the top arm under your body and back up.","Side plank with reach-through and leg raise":"Reach-through with the top leg lifted. Hips stay up.","Plank with backpack drag":"In a push-up position put the pack on the floor on one side. Drag it under your chest to the other hand with the opposite hand. Hips and shoulders stay still.","Towel body saw":"Forearm plank with your feet on a towel on a smooth floor. Slide the body forward and back a few centimetres with the trunk locked. Stop if your low back arches.","Plank with backpack drag, feet together":"Same drag, feet together so the base is narrower.","Towel body saw, 3-s hold":"Body saw with a 3 s hold at the longest point.","Side plank with reach-through, pack in hand":"Reach-through while the free hand holds the pack (L1).","Towel body saw, 4-s slides":"Four seconds out, four seconds back."},
+ w:[["Side plank",3,"40 s","","BW","","","side"],["Side plank with reach-through",3,8,"3-0-3","BW","","","side"],["Side plank with reach-through and leg raise",3,8,"3-0-3","BW","","","side"],["Side plank",2,"30 s","","BW","","","side"],
+    ["Plank with backpack drag",4,6,"3-0-3","L1","","","side"],["Towel body saw",4,10,"3-0-3","BW","","",""],["Plank with backpack drag, feet together",4,6,"3-0-3","L1","","","side"],["Side plank with reach-through",2,6,"3-0-3","BW","","","side"],
+    ["Towel body saw, 3-s hold",4,8,"3-3-3","BW","","",""],["Side plank with reach-through, pack in hand",4,8,"3-0-3","L1","","","side"],["Towel body saw, 4-s slides",4,8,"4-0-4","BW","","",""],["Towel body saw",2,6,"3-0-3","BW","","",""],
+    ["Towel body saw",2,6,"3-0-3","BW","","",""]]}
+];
+/* Calves (Monday) */
+const CALF={c:"Stand on one leg holding a wall. Rise as high as you can, hold the top, lower under control. A heavier pack gives the load, a thick book edge gives the longer range. Hold something for balance.",
+ vn:{"Loaded single-leg calf raise off a book edge":"Ball of the foot on the edge of a thick book, heel dropping below it. Longer range.","Loaded single-leg calf raise, paused at the bottom":"Off the book edge, 2 s pause in the deepest stretch.","Loaded single-leg calf raise, paused top and bottom":"Book edge, 2 s pause in the stretch and 2 s at the top."},
+ w:[["Single-leg calf raise",3,12,"2-1-2","BW",3],["Loaded single-leg calf raise",4,10,"2-1-2","L2",2],["Loaded single-leg calf raise, 3-s lowering",4,8,"2-1-3","L3",2],["Single-leg calf raise",2,8,"2-1-2","L1",4],
+   ["Loaded single-leg calf raise off a book edge",4,8,"2-1-3","L3",2],["Loaded single-leg calf raise, paused at the bottom",4,8,"2-2-3","L3",2],["Loaded single-leg calf raise, paused at the bottom",4,6,"2-2-4","L4",2],["Single-leg calf raise",2,6,"2-1-2","L2",4],
+   ["Loaded single-leg calf raise, paused top and bottom",4,6,"2-2-4","L4",2],["Loaded single-leg calf raise, 5-s lowering",4,6,"2-2-5","L4","1–2","Drop on the last set: 10 bodyweight raises, 1-0-1"],["Loaded single-leg calf raise, 5-s lowering",4,5,"2-3-5","L4","1–2","Drop on the last set: 10 bodyweight raises, 1-0-1"],["Single-leg calf raise",2,6,"2-1-2","L2",4],
+   ["Single-leg calf raise",2,6,"2-1-2","L2",4]]};
+
+/* ---------- power families (Friday). Tuple: [name, sets, reps, rest, extra] ---------- */
+const PFAMS=[
+{k:"vert",c:"Maximum intent on every jump, then stand still and rest fully. Land quietly with knees over toes. Stop the set when height or landing quality drops. Clear, dry, non-slip floor.",
+ vn:{"Double countermovement jump":"Jump, land softly, jump again straight away. Two quick contacts count as one rep.","Contrast pair: 3 fast backpack squats, then 3 jumps":"Three fast squats with the pack (2-0-X), rest 20 s, then 3 maximal jumps with no pack.","Single-leg countermovement jump":"Jump off one leg, land on the same leg and hold for 2 s. Touch the other foot down if you wobble and reset.","Single-leg countermovement jump with rebound hop":"Jump off one leg, land, and hop again at once. Hold the second landing for 2 s."},
+ w:[["Squat jump, stick the landing",3,5,"75 s"],["Countermovement jump, stick the landing",4,4,"90 s"],["Double countermovement jump",4,3,"90 s"],["Countermovement jump, stick the landing",2,3,"90 s"],
+    ["Contrast pair: 3 fast backpack squats, then 3 jumps",4,"3 + 3","2 min","pack L2"],["Contrast pair: 3 fast backpack squats, then 3 jumps",4,"3 + 3","2 min","pack L3"],["Contrast pair: 3 fast backpack squats, then 3 jumps",5,"3 + 3","2 min","pack L3"],["Contrast pair: 3 fast backpack squats, then 3 jumps",2,"3 + 3","2 min","pack L2"],
+    ["Single-leg countermovement jump",4,"3 per leg","2 min"],["Single-leg countermovement jump with rebound hop",4,"3 per leg","2 min"],["Single-leg countermovement jump with rebound hop",4,"3 per leg","2 min","peak week: stop at the first drop in height"],["Countermovement jump, stick the landing",2,3,"90 s"],
+    ["Countermovement jump, stick the landing",3,3,"2 min"]]},
+{k:"horiz",c:"Push hard, land balanced and freeze for 2 s. Mark where you land and try to beat it with the same landing quality. Clear floor, no obstacles.",
+ vn:{"Lateral bound, stick the landing":"Push off one leg sideways, land on the other leg and freeze.","Skater bound, stick the landing":"Bound sideways, land on one leg, freeze 1 s, then bound back.","Broad jump, then lateral bound, stick":"Broad jump forward, freeze, then a lateral bound, freeze.","Single-leg broad jump, stick the landing":"Hop forward off one leg, land on the same leg and freeze.","Single-leg broad jump, then lateral hop, stick":"Forward hop, freeze, then a lateral hop on the same leg, freeze.","Continuous skater bounds, controlled":"Five bounds in a row, side to side, controlled landings. Stop at the first wobble.","Cued jump direction":"Jump in the direction called, freeze the landing, then rest until the next call. Lots of space around you."},
+ w:[["Broad jump, stick the landing",3,4,"75 s"],["Lateral bound, stick the landing",4,"3 per side","90 s"],["Skater bound, stick the landing",4,"4 per side","90 s"],["Broad jump, stick the landing",2,3,"90 s"],
+    ["Broad jump, then lateral bound, stick",4,3,"90 s"],["Single-leg broad jump, stick the landing",4,"3 per leg","2 min"],["Single-leg broad jump, then lateral hop, stick",4,"3 per leg","2 min"],["Skater bound, stick the landing",2,"3 per side","90 s"],
+    ["Continuous skater bounds, controlled",4,"5 bounds","2 min"],["Single-leg broad jump, then lateral hop, stick",4,"3 per leg","2 min"],["Cued jump direction",5,"1 jump per cue","2 min","random cue, timer below"],["Lateral bound, stick the landing",2,"3 per side","90 s"],
+    ["Broad jump, stick the landing",3,3,"2 min"]]},
+{k:"rot",c:"Rotation comes from the hips, not the arms. Land balanced, feet under you, and finish with the strike only if the landing is stable. Stop the set when balance goes.",
+ vn:{"Standing hip snap into a fast hook":"No jump. Turn the hips explosively and throw a fast lead hook, return to stance. Pure rotational speed.","90° rotational jump, stick the landing":"Jump and turn 90° in the air, land on both feet and freeze.","90° rotational jump to a cross":"Jump, turn 90°, land, then throw a fast cross on the landing.","Rotational jump to low kick":"Jump, turn 90°, land, then throw a low kick, stopping 5 cm short of full extension.","Rotational jump, cued strike":"Jump, turn 90°, land. The strike is whichever the colour cue calls.","Rotational jump to hook and low kick":"Jump, turn 90°, land, then hook and low kick, stopping 5 cm short of full extension."},
+ w:[["Standing hip snap into a fast hook",3,"5 per side","60 s"],["90° rotational jump, stick the landing",4,"3 per side","90 s"],["90° rotational jump to a cross",4,"3 per side","90 s"],["90° rotational jump, stick the landing",2,"3 per side","90 s"],
+    ["90° rotational jump to a cross",4,"4 per side","90 s"],["Rotational jump to low kick",4,"3 per side","90 s"],["Rotational jump to hook and low kick",4,"3 per side","90 s"],["90° rotational jump, stick the landing",2,"3 per side","90 s"],
+    ["Rotational jump to hook and low kick",4,"4 per side","90 s"],["Rotational jump to hook and low kick",4,"4 per side","90 s"],["Rotational jump, cued strike",4,"4 per side","90 s","use the Defence + counter colours"],["Rotational jump to low kick",2,"3 per side","90 s"],
+    ["Rotational jump to low kick",3,"3 per side","90 s"]]},
+{k:"upper",c:"Lower slowly, then drive up as fast as you can. Stop the set when the speed drops. Clear floor under your hands.",
+ vn:{"Fast push-up, up as quickly as possible":"Controlled down, fastest possible up. Hands stay on the floor.","Explosive push-up, hands leave the floor":"Push hard enough that your hands leave the floor.","Clap push-up":"Push up hard enough to clap, land with soft elbows.","Decline clap push-up":"Feet on a chair against a wall, clap push-up. Stop if the landing is not controlled.","Decline clap push-up, then 6 fast push-ups":"Decline clap push-up, then straight into 6 fast regular push-ups with a 1 s lowering."},
+ w:[["Fast push-up, up as quickly as possible",3,6,"75 s"],["Explosive push-up, hands leave the floor",4,5,"90 s"],["Clap push-up",4,4,"90 s"],["Explosive push-up, hands leave the floor",2,4,"90 s"],
+    ["Clap push-up",4,5,"90 s"],["Decline clap push-up",4,4,"90 s"],["Decline clap push-up",5,4,"90 s"],["Clap push-up",2,4,"90 s"],
+    ["Decline clap push-up",5,4,"90 s"],["Decline clap push-up",5,5,"2 min"],["Decline clap push-up, then 6 fast push-ups",5,"4 + 6","2 min"],["Clap push-up",2,4,"90 s"],
+    ["Clap push-up",3,3,"2 min"]]}
+];
+const SPEED=[
+ "Max-speed teeps and low kicks, stop 5 cm short|6 × 6 s on / 30 s off|s|Alternate legs. Speed from the hips, knee never snaps straight. Stop if form degrades.|6,6,30",
+ "Max-speed low kick and body kick, stop 5 cm short|6 × 6 s on / 30 s off|s|Alternate legs. Hands stay up.|6,6,30",
+ "Max-speed jab–cross–low kick|6 × 6 s on / 30 s off|s|Three beats, as fast as you can stay clean.|6,6,30",
+ "Max-speed jab–cross, easy rest|4 × 6 s on / 45 s off|s|Deload: crisp, short, fresh.|4,6,45",
+ "Max-speed 1-2-low kick on the GO call|6 × 6 s on / 30 s off|s|Wait for your own count of 3, then go. Stop the set if speed drops by a third.|6,6,30",
+ "Max-speed 1-2-hook-low kick|6 × 6 s on / 30 s off|s|Four beats, clean returns.|6,6,30",
+ "Max-speed feint, 1-2, low kick|6 × 6 s on / 30 s off|s|The feint must look real. Then go.|6,6,30",
+ "Max-speed jab–cross, easy rest|4 × 6 s on / 45 s off|s|Deload: crisp, short, fresh.|4,6,45",
+ "Max-speed random combinations on A/B/C|6 × 6 s on / 30 s off|s|The call picks the combination you throw: A = 1-2-kick, B = 1-2-hook-kick, C = feint-1-2-kick.|6,6,30,choice3,10,10",
+ "Max-speed random combinations on A/B/C|6 × 6 s on / 30 s off|s|Same drill. Faster decisions, same clean returns.|6,6,30,choice3,10,10",
+ "Max-speed combinations after a fatigue call|6 × 6 s on / 30 s off|s|Fatigue calls demand the same quality when you are tired.|6,6,30,fat,10,10",
+ "Max-speed jab–cross, easy rest|4 × 6 s on / 45 s off|s|Deload: crisp, short, fresh.|4,6,45",
+ "Max-speed jab–cross–low kick, sharpness|4 × 6 s on / 45 s off|s|Taper: arrive sharp, not tired.|4,6,45"
+];
+
+/* ---------- weeks ---------- */
+const WEEKS=[
+{n:1,ph:0,nm:"Calibrate",md:"LEARN",tw:1,dl:0,rpe:[6,7,6,7,6],
+ r:["Stance and guard audit; jab, cross, lead hook, teep, low kick and body kick mechanics, filmed","Range lines, guard return, first scripted opponent with A/B decisions","Aerobic intervals 3 × 6:00 at RPE 6; burst-cruise rounds; baseline tests","Loaded squat, split squat and hinge calibrated to RIR 3; first jump work","Baseline tests and load calibration (find your L1–L4 backpack loads)"],
+ chg:"Starting point, set well above the old Week 1: hooks and body kicks from day one, loaded lifts at RIR 3, cues from the first session, and baseline tests built in.",
+ iq:"Distance|Watch two rounds of professional kickboxing with the sound off. Track one thing: how many steps each fighter takes in and out, and who controls the range. Then run the Range Lines drill.",
+ me:"Concentration|Count breaths 1 to 10 for 6 minutes and restart at 1 whenever a thought wanders. Then 4 minutes visualising one perfect jab–cross from your own eyes at real speed. 2 minutes writing what stopped your concentration.",
+ aer:"Aerobic intervals|3 × 6:00 at RPE 6, 2:00 easy between|s|MODERATE. Run, shuttle-run between two lines 3 m apart, or fast shadow cruise with footwork. Builds the aerobic engine.|3,360,120",
+ con:["Burst-cruise rounds|3 × 3:00 / 60 s rest|s|MODERATE–HIGH. BURST = 6 s of clean near-max combinations. Return to technique on every CRUISE. Controlled: the 2.4 km test is also on this day.|3,180,60,tempo,15,25"],
+ mon:{o:"Clean mechanics for six techniques, filmed, then a first cue-driven round.",
+  tech:["Stance and guard audit on video|3 × 1:00|s|Film front and side. Check chin down, elbows in, rear heel up, weight 50/50. Fix one thing and refilm.|3,60,30","Jab, cross, lead hook: slow to fast|4 × 2:00 (40 s slow, 40 s medium, 40 s fast)|s|Rotate from the feet, snap back on the line you threw it, hand home before the next rep.|4,120,30","Lead teep, rear low kick, rear body kick: slow mechanics|3 × 8 per side, each kick|s|Knee up, hip turns, standing foot pivots, strike through, land in stance. Stop 5 cm short of full extension so the knee never snaps straight.","Jab–cross–hook–low kick–exit|4 × 2:00|s|Five beats at 70% speed. Guard returns after the hook and again after the kick.|4,120,30"],
+  tact:["Range lines with an A/B decision|4 × 2:00|m|Lay two lines on the floor with shoes or a towel: one at arm's length from an imagined opponent, one at leg's length. A = jab–cross–low kick, B = jab–cross–exit. The app calls A or B. Punch only past the arm line, kick only past the leg line.|4,120,30,choice,3,6"]},
+ wed:{o:"Learn all four defences and pair each with a counter from day one.",
+  def:["Guard shell and shin-check hold|4 × 1:30|s|Lift the lead knee to hip height, shin vertical, knee turned out, foot flexed. Hold 2 s, set down without hopping. Trains the shape and balance. Real checking needs a partner.|4,90,30","Parry then cross, both hands|4 × 2:00|s|A small inside tap with the rear hand, then the cross over the top. Return to guard.|4,120,30","Slip, cover and block, each with a counter|4 × 2:00|s|Colours call the pair: RED parry + cross, BLUE slip + hook, GREEN cover + low kick.|4,120,30,defc,4,7"],
+  foot:["Box step, L-step and pivots on floor lines|4 × 2:00|m|Lead foot moves first, trailing foot follows. Feet never cross. Use shoes or a towel as lines.|4,120,30,entry,4,8","Doorframe slip|3 × 1:30|m|Stand an arm's length from a doorframe edge. Slip so your head passes the edge line on each side without touching it. Eyes forward, knees bend.|3,90,30"]},
+ sat:{o:"Meet your first scripted opponent and decide under a cue.",
+  sc:["Scripted opponent: jab, cross, then retreat|4 × 2:00|s|Script on paper: opponent jabs, crosses, steps back. You parry, slip, step in with a counter. Loop it at 70% speed.|4,120,45","A/B scenario: opponent covers or drops his hands|3 × 2:00|s|A = he covers, throw the body kick. B = he drops his hands, throw head punches.|3,120,45,choice,4,7","Replay your filmed round and mark 3 leaks|10 min|s|Hands dropping, feet crossing, standing flat-footed. Write them in your note."],
+  opt:["COACH REQUIRED: have a coach watch your stance, jab, hook and rear low kick pivot|10 min|c|Ask for one correction only."]}},
+{n:2,ph:0,nm:"Load and Choice",md:"REINFORCE",tw:0,dl:0,rpe:[6,7,6,8,6],
+ r:["Jab–cross–hook–uppercut chains with exits; rear body kick speed","Enter, strike, exit; A/B/C decisions; defence paired with a counter","Burst-cruise rounds 5 × 3:00; aerobic 4 × 5:00 at RPE 6–7","Squat 4 × 8 at L3, loaded table row, paused tempo push-up","Decisions under cues; rest drops to 45 s"],
+ chg:"Heavier and denser than Week 1: 4 sets at L3 instead of 3 at L2, a loaded row, paused push-ups, 5 rounds instead of 3 and a faster rest.",
+ iq:"Range recognition|Watch two rounds. Label every exchange as LONG (kicks), MID (punches) or CLOSE (clinch and knees) and keep a tally. Note who forces the change of range.",
+ me:"Breath control|Box breathing, 4 s in, 4 hold, 4 out, 4 hold, for 6 minutes. Then a body scan from feet to jaw for 3 minutes. End with 4 minutes of visualising your stance from inside, rehearsing jab–cross–exit.",
+ aer:"Aerobic intervals|4 × 5:00 at RPE 6–7, 90 s easy between|s|MODERATE–HIGH. Run, shuttle-run or fast shadow cruise.|4,300,90",
+ con:["Burst-cruise rounds|5 × 3:00 / 60 s rest|s|HIGH bursts in MODERATE cruise. BURST = 6 s near-max, clean. CRUISE is technical flow at RPE 5–6.|5,180,60,tempo,12,25","Finisher: all-out shadow|3 × 30 s on / 30 s off|s|HIGH. 30 s of max-speed combinations with clean guard returns.|3,30,30"],
+ mon:{o:"Add the exit and the uppercut. Chains get longer and rest gets shorter.",
+  tech:["Uppercut mechanics, lead and rear|4 × 1:00|s|Knees dip, drive from the legs, palm toward you, elbow tucked. Short, not looping.|4,60,30","Jab–cross–hook–uppercut–cross|4 × 2:00|s|Weight under the hips, short and stacked. Hands home after the last cross.|4,120,30","Combo: 1-2-hook-low kick, step off the line|4 × 2:00|s|Five beats, then leave at 45°. 80% speed.|4,120,30","Rear body kick and low kick, speed work|3 × 10 per side|s|Chamber, turn, snap, recover to stance. Stop 5 cm short of full extension."],
+  tact:["Enter, strike, exit with an A/B decision|4 × 2:00|m|Start outside the leg line. A = enter with a teep then 1-2, B = enter with a feint then low kick. Leave on a different line each time.|4,120,30,choice,3,6"]},
+ wed:{o:"Defence paired with counters, and exits you choose.",
+  def:["Parry then cross, slip then hook, cover then low kick|5 × 2:00|s|The colour calls the pair. Defence first, counter second.|5,120,45,defc,3,6","Shin check then counter, low and body|4 × 2:00|s|Check, plant the foot, counter without a reset.|4,120,45"],
+  foot:["In-and-out with a diagonal exit|4 × 2:00|m|Mark a plus sign on the floor with shoes. Step in on one arm, exit on another.|4,120,45,entry,3,6","Doorframe slip, then counter|3 × 1:30|m|Slip past the edge line, then throw one punch back through the space.|3,90,30"]},
+ sat:{o:"Scripted opponent with three possible answers.",
+  sc:["Scripted opponent: jab–cross–hook, then retreat|4 × 2:00|s|Script on paper. Parry the jab, slip the cross, cover the hook, counter as he steps back. Change one line of the script after round 2.|4,120,45","A/B/C scenario: choose from three answers|3 × 2:00|s|A = parry and cross, B = slip and hook, C = check and low kick. The cue picks which one you throw.|3,120,45,choice3,4,7","Replay and mark 3 leaks|10 min|s|Compare with last week's leaks. Which are fixed?"],
+  opt:["COACH REQUIRED: have a coach check the rear low kick pivot and body-kick chamber|10 min|c|Ask for one correction only."]}},
+{n:3,ph:0,nm:"Pause and Chain",md:"COMBINE",tw:0,dl:0,rpe:[7,8,7,8,7],
+ r:["Five-to-six beat combinations with defence inside; knee mechanics","Defend a 3-hit sequence, then counter by choice; first fatigue-managed rounds","Repeat-effort 3 × (8 × 10 s / 20 s); aerobic 5 × 4:00 at RPE 7","Paused squat and split squat (3-2-1), decline push-ups, dead bug arms overhead","Defence inside combinations; technique under fatigue"],
+ chg:"Pauses and deeper ranges arrive on the lifts, bursts per set go from 6 to 8, and the defence now sits inside the combination instead of after it.",
+ iq:"Patterns|Pick one fighter and watch three rounds. Write down 3 habitual patterns, for example 'always a lead leg kick after a jab' or 'drops the rear hand after a cross'. Then script one of these for your Saturday opponent.",
+ me:"Visualisation fundamentals|3 min box breathing. Then visualise a combination using all senses: the floor under your feet, the sound of your breath, the speed. Run 1-2-hook-low kick-exit five times at real time. 2 min note on how clear it felt, 1–5.",
+ aer:"Aerobic intervals|5 × 4:00 at RPE 7, 90 s easy between|s|HIGH. Run, shuttle-run or fast shadow cruise. Even pace across all five.|5,240,90",
+ con:["Repeat-effort sets|3 sets of 8 × 10 s all-out / 20 s easy, 3:00 between sets|s|HIGH. Shadow combinations at max speed for 10 s. Stop a set if speed falls by a third. Press start for each set.|8,10,20","Fatigue round: 20 squats, then clean combinations|3 × (20 bodyweight squats, then 1:00 clean 1-2-hook-kick)|s|Do the 20 squats first, then press the timer and throw clean combinations. The score is guard return and balance.|3,60,60"],
+ mon:{o:"Chain six beats and put a defence in the middle of them.",
+  tech:["Hook–cross–hook, then slip and cross|4 × 2:00|s|The slip is part of the sequence, not a pause.|4,120,30","Straight knee, lead and rear|3 × 8 per side|s|Pull an imaginary head down, drive the hip forward, chest tall. No back lean.","Combo: teep, 1-2, hook, low kick, exit (six beats)|4 × 2:00|s|Teep first to set the range. Exit off the line.|4,120,30","Defence inside the combination: 1-2, slip, hook, kick|4 × 2:00|s|Slip after the cross, hook from the slip, kick from the hook.|4,120,30"],
+  tact:["Fatigue-managed rounds: 30 s burst, then 90 s clean technique|4 rounds|s|Burst 30 s at near-max, then drop to RPE 6 and keep the guard clean for 90 s. Film one round.|4,120,45,tempo,15,25"]},
+ wed:{o:"Defend a three-hit sequence and counter by choice.",
+  def:["Defend an imagined 3-hit combination: parry, slip, cover|5 × 2:00|s|Imagine jab–cross–hook coming. Respond in order, then counter once.|5,120,45,defc,3,6","Check, counter, exit|4 × 2:00|s|Check the imagined low kick, counter, then leave on an angle.|4,120,45"],
+  foot:["Angle steps: 45° off, strike from the new angle|4 × 2:00|m|Step off the line, throw one punch or kick from the new angle, square up.|4,120,45,entry,3,6","Pivot circles with counters|3 × 2:00|m|Circle with small steps, lead foot first, counter on each pivot.|3,120,45"]},
+ sat:{o:"A three-hit opponent and a decision under range cues.",
+  sc:["Scripted opponent: 3-hit combination, you choose the counter|4 × 2:00|s|Write a 3-hit script. Parry, slip, cover, and finish with a counter you pick in the moment.|4,120,45","Range-call scenario|3 × 2:00|s|Calls: LONG kick or teep, MID punches, CLOSE knees and short shots, BREAK step out. Switch within a second.|3,120,45,range,5,9","Replay and mark 3 leaks|10 min|s"],
+  opt:["PARTNER REQUIRED: slow-flow jab and parry drill, light and below the shoulders|3 × 2:00|p|Only with a trained partner. Not part of the main program."]}},
+{n:4,ph:0,nm:"Deload and Test 1",md:"TEST",tw:1,dl:1,rpe:[5,5,5,5,5],
+ r:["Best versions of every skill, no fatigue","Self-assessment on video: what leaks at zero fatigue?","Easy aerobic flush, speed bursts, conditioning test","Strength tests; volume −45%, speed and load of the main lifts kept","Phase 1 tests and weak-link list"],
+ chg:"Deload on purpose. Sets, rounds and rest-day load drop by about 45%, speed and technique stay sharp, and Phase 1 gets measured.",
+ iq:"Predict and play|Pause a fight clip at 5 random moments. Before pressing play, write what you expect each fighter to do next. Score yourself out of 5. That is today's decision-making test.",
+ me:"Review and calm|10 min: box breathing for 4. Then write 3 things that improved in Phase 1 and 1 you want to fix. Finish by visualising Phase 2: your first feint, the opponent's reaction and your counter.",
+ aer:"Easy aerobic flush|20:00 at RPE 3|s|LOW. Walk, jog or shuttle-run slowly. Recovery is the point.|1,1200,0",
+ con:["Easy rounds, then speed|3 × 3:00 at RPE 4 / 60 s rest|s|LOW plus speed work to follow. No fatigue.|3,180,60"],
+ mon:{o:"Technical test day. Volume drops by half and quality stays high.",
+  tech:["Best version: jab–cross–hook–low kick|3 × 1:00|s|Stop each round at the first sloppy rep. Three clean beats beat twenty messy ones.|3,60,60","Kick mechanics, best 5 per type per side|5 reps each of teep, low and body|s|Slow for balance, then 2 reps at speed.","Speed rounds: max-speed straight punches|6 × 8 s on / 52 s off|s|Short, sharp, clean.|6,8,52"],
+  tact:["Range-line precision with A/B decisions|2 × 2:00|m|Same drill as Week 1 at game pace. Count strikes thrown from the wrong line.|2,120,60,choice,4,7"]},
+ wed:{o:"Decision-making test day, light movement.",
+  def:["Defence test round: imagined jab–cross–hook|3 × 1:30|s|Film. Count correct defences (parry, slip, cover in order).|3,90,45"],
+  foot:["Footwork flow at RPE 3|3 × 2:00|m|Easy. Note which direction feels weakest.|3,120,45"]},
+ sat:{o:"Easy review and Phase 2 planning.",
+  sc:["Filmed free-shadow round at RPE 4|2 × 3:00|s|Move freely. Do not push.|2,180,60","Write 3 priorities for Phase 2|15 min|s|From your leaks list and your test results."],
+  opt:["COACH REQUIRED: ask a coach to review your best filmed round|10 min|c"]}},
+{n:5,ph:1,nm:"Defend, Counter, Angle",md:"DEVELOP",tw:0,dl:0,rpe:[7,8,7,8,7],
+ r:["Defence → counter → angle; shoulder, foot and level feints; head-kick mechanics","Range cues; feint-and-read; every defence ends on a new angle","Fight-pace cue rounds 5 × 3:00 / 45 s; aerobic 5 × 4:00 at RPE 7–8","Heaviest pack so far (L4), paused squats; rear-foot-elevated split squats; feet-elevated rows; pike push-ups","Cues choose your range, every defence ends on a new angle"],
+ chg:"The heaviest loads yet (L4) with 3-s pauses, rear-foot-elevated split squats and feet-elevated rows replace the easier versions, feints arrive, and conditioning rounds run on random cues with 45 s rest.",
+ iq:"Reactions|Watch three rounds. Note what each fighter does in the first second after being jabbed or kicked: retreat, counter, cover, clinch. Then note 5 feints and the reaction each one caused.",
+ me:"Composure|10 min. Breathing for 3 min. Then visualise missing a combo: the mistake, one breath out, back to guard within 2 s. Pick a trigger word ('reset') and use it in every shadow round this week.",
+ aer:"Aerobic power intervals|5 × 4:00 at RPE 7–8, 75 s easy between|s|HIGH. Run, shuttle-run or fast shadow cruise with footwork. Hold a pace you can repeat five times.|5,240,75",
+ con:["Fight-pace rounds on random defence cues|5 × 3:00 / 45 s rest|s|HIGH. Colours call a defence and counter every 4–7 s. Technique first, speed second.|5,180,45,defc,4,7","Finisher bursts|4 × 20 s all-out / 20 s easy|s|HIGH. Max-speed combinations with a clean guard on every return.|4,20,20"],
+ mon:{o:"Feints open a new layer: you now make the opponent move.",
+  tech:["Shoulder feint then jab; level-change feint then low kick|4 × 2:00|s|Feint small and sharp, a real threat. Your feet do not leave their base on the feint.|4,120,30","Lead-foot feint, cross, low kick|4 × 2:00|s|Show a half step, then commit the step with the cross.|4,120,30","Head-kick mechanics (controlled height) and rear body kick|3 × 6 per side|s|Head kick: only as high as you can control with no hip pain. Chamber high, rotate, return. Stop 5 cm short of full extension.","Teep to the body, then jab–cross–hook|4 × 2:00|s|The teep stops the imagined advance, the punches follow.|4,120,30"],
+  tact:["Defence, counter, angle on cue|5 × 2:00|s|Each colour is three steps: defend, counter, then change your angle. Finish on a new line every time.|5,120,30,dca,3,6"]},
+ wed:{o:"Every defence now ends on a new angle.",
+  def:["Parry, counter, pivot out|5 × 2:00|s|Parry the imagined jab, cross, then pivot 45° out of the line.|5,120,45,dca,3,6","Check, counter, angle|4 × 2:00|s|Check the imagined kick, counter, leave at 45°.|4,120,45"],
+  foot:["Range cues: footwork and offence matched to the call|5 × 2:00|m|LONG teeps and kicks, MID punches, CLOSE knees, BREAK step out.|5,120,45,range,6,10","False step-ins and pivots|4 × 2:00|m|Make a half step the opponent must react to, then step out on an angle.|4,120,45,entry,4,8"]},
+ sat:{o:"Feints, reactions and different opponent styles.",
+  sc:["Feint → reaction → counter, scripted|4 × 2:00|s|Throw the feint, imagine the reaction the call names, and punish it.|4,120,45,fcc,5,9","Opponent-style rounds: pressure vs counter-puncher|4 × 2:00|s|Write a one-line plan for each style before the round.|4,120,45,opp,20,35","Replay: mark every hesitation|10 min|s|A hesitation is a decision you did not have ready."],
+  opt:["PARTNER REQUIRED: slow-flow jab, parry, counter drill, no contact above the shoulders|3 × 2:00|p|Only with a trained partner."]}},
+{n:6,ph:1,nm:"Feint, Read, Punish",md:"DEVELOP",tw:0,dl:0,rpe:[7,8,7,8,7],
+ r:["Feint → reaction → counter; knees; kick doubles; angle off a kick","Opponent-style cues; feint chains; kick defence with a counter","Repeat-effort 3 × (6 × 15 s on / 15 s off); aerobic 5 × 4:00 at RPE 8","1.5-rep squats at L4, paused RFESS, pike push-ups with a drop set, towel body saw","Reactions you must punish; work-to-rest goes from 1:2 to 1:1"],
+ chg:"Lowering gets slower and drop sets begin on the push and pull, work-to-rest goes from 1:2 to 1:1 in the repeat-effort sets, and the feint now has to produce a reaction that you punish.",
+ iq:"Counters|Watch three rounds. For each counter note what triggered it, which defence came first, and whether the counter landed. Count counters per round per fighter.",
+ me:"Responding to being hit|10 min. Breathing for 3 min. Then visualise being tagged by a jab: eyes stay open, exhale, parry, counter. Rehearse five times at real speed. Say your trigger word at the start of each.",
+ aer:"Aerobic power intervals|5 × 4:00 at RPE 8, 60 s easy between|s|HIGH. Run, shuttle-run or fast shadow cruise. Rest is shorter than last week, so go off a pace you can hold.|5,240,60",
+ con:["Repeat-effort sets, work equals rest|3 sets of 6 × 15 s hard / 15 s easy, 3:00 between sets|s|HIGH. 15 s of max-speed combinations, 15 s of easy movement. Press start for each set.|6,15,15","Opponent-style rounds|3 × 3:00 / 45 s rest|s|HIGH. Change plan within 2 s of every call.|3,180,45,opp,20,35"],
+ mon:{o:"Make the opponent react, then punish the reaction.",
+  tech:["Straight knee and punch–knee–exit|4 × 2:00|s|Finish a hook with a knee, then pivot out.|4,120,30","Kick doubles: low kick then body kick, same leg|4 × 2:00|s|Recover your balance between the two kicks.|4,120,30","Layered combo: feint, jab, cross, hook, low kick, exit|4 × 2:00|s|Six beats, each with intent. Stop on the first sloppy beat.|4,120,30"],
+  tact:["Feint → reaction → counter on cue|5 × 2:00|s|Throw a real feint, imagine the reaction the call names, and punish it with the answer shown.|5,120,30,fcc,4,7"]},
+ wed:{o:"Defend kicks and counter the counter.",
+  def:["Defence against kicks: check, counter, exit|5 × 2:00|s|Check, plant the foot, counter, leave at 45°.|5,120,45,dca,3,6","Parry, feint, attack: counter the counter|4 × 2:00|s|Parry the imagined counter, feint to reload, attack.|4,120,45","Doorframe slip, roll under the hook|3 × 2:00|m|Slip past the edge line, roll under an imagined hook and come back up with a counter.|3,120,45"],
+  foot:["Angle off a kick: pivot, then kick from the new angle|4 × 2:00|m|Pivot first, then kick. The kick comes from the new angle.|4,120,45,entry,4,8"]},
+ sat:{o:"Opponent styles and a three-minute round with angles.",
+  sc:["Opponent-style rounds: pressure, counter-puncher, kicker|4 × 3:00|s|Write a plan for each style first. Change within 2 s of each call.|4,180,45,opp,20,40","Defence → counter → angle in a three-minute round|3 × 3:00|s|Every defence ends on a new line.|3,180,45,dca,4,7","Replay and mark 3 leaks|10 min|s"],
+  opt:["COACH REQUIRED: have a coach review your head-kick mechanics and chamber height|10 min|c"]}},
+{n:7,ph:1,nm:"Pressure and Hunt",md:"DEVELOP",tw:0,dl:0,rpe:[7,8,7,9,7],
+ r:["Layered combinations with two feints; hook-uppercut-knee; solo clinch-entry posture","Pressure defence; ring cutting vs a retreating opponent; round plans","Pressure rounds 5 × 3:00 / 45 s plus a 30 s finisher; aerobic 4 × 6:00 at RPE 8","5-s lowering squats at L4, paused rear-foot-elevated split squats, 4-s pike push-ups, loaded feet-elevated rows","Three-minute pressure rounds with bursts"],
+ chg:"Peak of Phase 2: 3-minute rounds with 45 s rest, ring-cutting and retreating-opponent scenarios, 5-s lowers, and a 30 s finisher after the rounds.",
+ iq:"Pressure|Watch how a pressure fighter cuts the ring. Note the foot they lead with, how the other fighter escapes (angle, clinch, counter) and where on the ring exchanges happen.",
+ me:"Attention control|10 min. Practise soft focus: stare at one point and track the edges of the room without moving your eyes. Then 4 min of visualised scanning of an opponent's shoulders, hips and hands in turn.",
+ aer:"Aerobic intervals, long|4 × 6:00 at RPE 8, 90 s easy between|s|HIGH. Hold a pace you could repeat. Shadow cruise or running.|4,360,90",
+ con:["Pressure rounds|5 × 3:00 / 45 s rest|s|HIGH. Pressure cues: hold your ground, defend, pivot out and counter. Never back up in a straight line.|5,180,45,press,15,30","Finisher|4 × 30 s all-out / 30 s easy|s|HIGH. Max-speed combinations. Stop if your guard stops coming back.|4,30,30"],
+ mon:{o:"Two feints, a close-range finish, and your first pressure scenario.",
+  tech:["Layered combos with two feints|4 × 2:00|s|Feint, feint, attack. The second feint must look different from the first.|4,120,30","Hook, uppercut, knee, exit|4 × 2:00|s|Short punches close the range, the knee finishes, the pivot leaves.|4,120,30","Solo clinch-entry shadow: collar-tie posture, knee, exit|3 × 2:00|s|Real clinch needs a partner and coach. Solo, rehearse posture only: head up, elbows in, hips under, knee, step out.|3,120,30"],
+  tact:["Pressure scenario: opponent walks you down|5 × 3:00|s|You never backpedal in a straight line. Defend, pivot, counter, leave.|5,180,45,press,20,35"]},
+ wed:{o:"Pressure defence, and the hunt: cutting the ring.",
+  def:["Pressure defence: pivot exit, then counter|5 × 3:00|s|Imagine an opponent walking you down: block or parry, pivot 45°, counter, leave.|5,180,45,dca,3,6","Cover, counter, exit chains|3 × 2:00|s|Cover first. The counter must start before you uncover.|3,120,45"],
+  foot:["Cutting off the ring (room corner or furniture as ropes)|5 × 2:00|m|Chase an imagined retreating opponent. Small steps, cut the angle, strike when they reach the corner. Then swap: you are cornered, escape on an angle.|5,120,45,retreat,6,10"]},
+ sat:{o:"Fatigue management and a full round plan.",
+  sc:["Fatigue-management rounds|4 × 3:00|s|Obey every call at once. The score is clean guard returns and a clear decision when tired.|4,180,45,fat,15,25","Round-specific plan: R1 read, R2 push, R3 finish|3 × 3:00|s|R1: stay in range and collect information. R2: commit to the plan. R3: finish or switch.|3,180,45,plan,20,35","Replay and rate your decisions 1–5|10 min|s"],
+  opt:["PARTNER REQUIRED: slow-flow pressure drill, partner walks forward and you pivot out|3 × 2:00|p|No contact above the shoulders."]}},
+{n:8,ph:1,nm:"Deload and Test 2",md:"TEST",tw:1,dl:1,rpe:[5,5,5,5,5],
+ r:["Quality review of everything from Phase 2","Decision test: cue accuracy and pause-and-predict, including fatigued","Easy aerobic, repeat-effort test, conditioning test","Strength tests; volume −45%, load of the main lifts kept","Mid-program assessment and Phase 3 planning"],
+ chg:"Deload plus mid-program assessment. Volume drops by about 45%, speed and technique stay sharp, and every day from Monday to Friday has a test.",
+ iq:"Predict and play, round 2|Pause a fight clip at 5 moments. Predict the next action, then press play. Score out of 5 and compare with Week 4. Also diagram one exchange: before, decision, after.",
+ me:"Review|10 min. Breathing for 3. Then rate yourself 1–5 on composure after a mistake, reaction under cues and focus. Write one thing you'll do differently in Phase 3. Visualise the first scenario round of Week 9.",
+ aer:"Easy aerobic flush|20:00 at RPE 3|s|LOW. Recovery.|1,1200,0",
+ con:["Easy rounds, then speed|3 × 3:00 at RPE 4 / 60 s rest|s|LOW.|3,180,60"],
+ mon:{o:"Technical test day with zero grind.",
+  tech:["Best version: feint, jab, cross, low kick, exit|3 × 1:30|s|Stop at the first sloppy rep.|3,90,60","Kick balance review|5 reps each of teep, low, body per side|s|Slow for balance, then 2 reps at speed.","Speed rounds: max-speed straight punches|6 × 8 s on / 52 s off|s|Short, sharp, clean.|6,8,52"],
+  tact:["Choice A/B/C, light|2 × 2:00|m|Easy pace.|2,120,60,choice3,4,7"]},
+ wed:{o:"Decision-making test day.",
+  def:["Defence and counter, light flow|3 × 2:00|s|Easy pace, cues on.|3,120,60,defc,4,7"],
+  foot:["Entry and exit flow|2 × 2:00|m|RPE 3.|2,120,60"]},
+ sat:{o:"Easy filmed scenario rounds and Phase 3 planning.",
+  sc:["Scripted opponent, free flow at RPE 4|3 × 2:00|s|Use your favourite script.|3,120,60","Replay and set 3 targets for Phase 3|15 min|s"],
+  opt:["COACH REQUIRED: have a coach review your best round|10 min|c"]}},
+{n:9,ph:2,nm:"Everything Random",md:"INTENSIFY",tw:0,dl:0,rpe:[7,8,7,9,7],
+ r:["Layered six-to-seven beat combinations; defence, range and opponent cues in one round","Opponent-style switching at pace; pressure and retreat; defence while tired","Opponent-switch rounds 5 × 3:00 / 45 s plus one capacity set; aerobic 5 × 4:00 at RPE 8","Shrimp squats, paused RFESS at L4, 5-s single-leg RDL at L4, archer push-ups","Three cue types in one session, decisions at RPE 8"],
+ chg:"Unilateral strength replaces bilateral (shrimp squats, archer push-ups), pauses are heavier at L4, a capacity set is added to Friday, and three different cue types appear in a single session.",
+ iq:"Adaptation|Watch rounds 1 and 3 of the same fight. Note changes in distance, volume of strikes, kick usage and defence. What did each fighter adjust and why?",
+ me:"Pressure visualisation|12 min. Do 20 squats first to raise your heart rate. Then visualise an opponent walking you down while you keep guard, pivot and counter. Practise a long exhale while your heart rate is up.",
+ aer:"Aerobic power intervals|5 × 4:00 at RPE 8, 60 s easy between|s|HIGH. Run, shuttle-run or fast shadow cruise.|5,240,60",
+ con:["Opponent-switch rounds|5 × 3:00 / 45 s rest|s|HIGH. The cue switches the opponent's style every 15–30 s. Change your plan within 2 s.|5,180,45,opp,15,30","Capacity set|1 set of 6 × 20 s all-out / 30 s easy|s|MAXIMUM for 20 s only (RPE 9). Technique must stay legible. Stop the set if form collapses.|6,20,30"],
+ mon:{o:"Six- and seven-beat combinations, and three cue types in the same session.",
+  tech:["Layered seven-beat combo: feint, jab, cross, hook, cross, low kick, exit|4 × 2:00|s|Every beat is clean. Stop on the first sloppy beat, reset and restart.|4,120,30","Speed rounds: max-speed straight punches|6 × 10 s on / 50 s off|s|Technique first. If the hand stops returning to guard, end the set.|6,10,50","Body kick and low kick doubles, then exit|3 × 6 per side|s|Same leg twice, then step out. Balance on landing is the score."],
+  tact:["Defence against imagined 3-hit combinations on random cues|5 × 2:00|s|Colours call the reaction: RED parry then cross, BLUE slip then hook, GREEN cover then low kick, YELLOW check then counter, WHITE pivot out.|5,120,30,defc,3,5","Range-cued attack rounds|3 × 2:00|s|LONG kicks and teeps, MID punches, CLOSE knees, BREAK exit.|3,120,30,range,4,7"]},
+ wed:{o:"Defence under pressure against random cues and shifting range.",
+  def:["Defence, counter, angle on random cues|5 × 3:00|s|Defend, counter, change line. No pre-set order.|5,180,45,dca,3,5","Cover, counter, exit chains, tired|3 × 2:00|s|Do 15 squats first, then go straight into the round. Notice what drops.|3,120,45"],
+  foot:["Cutting off the ring and escaping it|5 × 2:00|m|Chase the retreating opponent, then switch roles on the call.|5,120,45,retreat,5,9","Circle and cut: change direction on the cue|4 × 2:00|m|The cue flips direction. Adjust your angles and strikes.|4,120,45,entry,3,6"]},
+ sat:{o:"Opponent types and fatigue in three-minute rounds.",
+  sc:["Style-switching rounds|5 × 3:00|s|Cue switches the opponent's style every 15–30 s. Write a plan against each style first.|5,180,45,opp,15,30","Pressure then retreat: you decide the plan|3 × 3:00|s|Pressure cues first, then retreat cues. Make a one-line plan before each round.|3,180,45,press,15,30","Replay: count hesitations|10 min|s"],
+  opt:["PARTNER REQUIRED: slow-flow defence drill, partner throws light jab–cross, you parry and counter|3 × 2:00|p|Touch contact only."]}},
+{n:10,ph:2,nm:"Peak Load",md:"INTENSIFY",tw:0,dl:0,rpe:[7,9,7,9,8],
+ r:["Check–counter–kick chains; solo clinch-entry; speed at max intent; you write the opponent loop","Pressure defence with your own counter choice; reading patterns; decisions after hard bursts","Capacity 3 × (6 × 20 s / 30 s); fatigue-cue rounds 3 × 3:00 / 45 s; aerobic 6 × 3:00 at RPE 8","Shrimp squats at L2 with a drop set, 5-s RFESS at L4, 4-s lowering rows, calf drop sets","Decisions after hard bursts, no pre-set mapping"],
+ chg:"Strength reaches RPE 9 (RIR 1–2) with mechanical drop sets, capacity work goes from one set to three with rest cut from 40 s to 30 s, and counters are now your own choice with no pre-set mapping.",
+ iq:"Patterns and tells|Watch for a tell before each strike: shoulder drop before a cross, weight shift before a kick, rear-hand movement. Write 2 tells per fighter, then try to predict the next strike at pause points.",
+ me:"Fatigue composure|12 min. Do a hard 30-second set (shadow burst), then immediately do 60 s of box breathing. Visualise the next exchange for 10 s. Repeat three times. Goal: lower your heart rate on purpose.",
+ aer:"Aerobic power intervals|6 × 3:00 at RPE 8, 60 s easy between|s|HIGH. Higher density than Week 9. Run, shuttle-run or fast shadow cruise.|6,180,60",
+ con:["Capacity sets|3 sets of 6 × 20 s all-out / 30 s easy, 4:00 between sets|s|MAXIMUM for 20 s only (RPE 9). Press start for each set. Stop a set if form collapses or your guard stops returning. Skip the third set on a YELLOW day.|6,20,30","Fatigue-cue rounds|3 × 3:00 / 45 s rest|s|HIGH. Obey every call. Clean technique and a clear decision when tired.|3,180,45,fat,12,22"],
+ mon:{o:"Chains, counter choice and your own opponent loop.",
+  tech:["Check, counter, kick chains|4 × 2:00|s|Check the imagined low kick, counter with a cross, answer with your own low kick, exit.|4,120,30","Solo clinch-entry shadow: collar-tie posture, knee, exit|3 × 2:00|s|Real clinch needs a partner and coach. Solo, rehearse posture only: head up, elbows in, hips under, knee, step out.|3,120,30","Max-speed 1-2 and 1-2-3 with full rest|5 × 5 s, rest 45 s|s|The first rep should be your fastest.|5,5,45"],
+  tact:["Play both roles: write a 3-step opponent loop and answer it|5 × 2:00|s|Opponent loop: step in, jab, low kick. You: pivot, parry, counter. Run it, then change one step of the loop. Pattern recognition is spotting the change.|5,120,30"]},
+ wed:{o:"Pressure defence where the counter is your own decision.",
+  def:["Pressure defence into counter decisions|5 × 3:00|s|On each cue choose the counter yourself. You have one second. No pre-set mapping.|5,180,45,defence,3,5","Guard check under fatigue: 20 squats, then 2 min of defence|3 rounds|s|Do 20 squats, go straight into 2:00 of defence-only shadow. Notice what drops."],
+  foot:["Circle and cut: change direction on cue|4 × 2:00|m|The cue flips direction. Adjust your angles and strikes.|4,120,45,entry,3,5","Hunting the retreating opponent, tired|4 × 2:00|m|Do 10 squats first. Cut the angle and strike when he reaches the corner.|4,120,45,retreat,5,8"]},
+ sat:{o:"Decisions after hard bursts, in three-minute rounds.",
+  sc:["Opponent type 1: pressure fighter|3 × 3:00|s|Script: he walks forward, jab–cross, no defence. You pivot, counter, leave. Start every round with a 20 s burst.|3,180,45","Opponent type 2: kicker|3 × 3:00|s|Script: he stays long, teeps, low kicks. You close with a feint, strike, leave. Start every round with a 20 s burst.|3,180,45","Fatigue-management rounds|3 × 3:00|s|Obey every call.|3,180,45,fat,12,22","Replay and rate your decisions 1–5|10 min|s"],
+  opt:["COACH REQUIRED: supervised clinch entry and knees at light pressure|3 × 2:00|c|Not part of the main program."]}},
+{n:11,ph:2,nm:"Peak and Fight Rounds",md:"INTENSIFY",tw:0,dl:0,rpe:[7,9,8,9,8],
+ r:["Layered combinations with two feints and a defence inside; opposite-stance shadow; you design the game plan","Opponent style changes mid-round; plans abandoned when they fail twice; fatigue decisions","Fight rounds 6 × 3:00 / 45 s with plan and fatigue cues, plus an optional finisher on GREEN days","Shrimp squats paused at L2 with a drop, 1.5-rep RFESS at L4, 6-s RDL, paused archer push-ups","Round-specific plans and decisions while fatigued"],
+ chg:"Hardest week of the camp: six 3-minute rounds, the lowest rest of the camp (45 s), the slowest and heaviest tempos, and the plan must change mid-round when it stops working.",
+ iq:"Ring and cage control|Watch who controls the centre and track positions every 30 s. Note how fighters escape corners and which exits work (angle, spin, clinch).",
+ me:"Decisions under pressure|12 min. Breathing for 3. Then visualise 3 branching scenarios and say your decision out loud in each: opponent presses, opponent kicks, opponent clinches. Time yourself: decide inside 1 s.",
+ aer:"Aerobic power intervals|4 × 6:00 at RPE 8, 90 s easy between|s|HIGH. Technical form under steady fatigue.|4,360,90",
+ con:["Fight rounds with plan and fatigue cues|6 × 3:00 / 45 s rest|s|HIGH. The plan cue calls plan A, plan B, a switch, a mistake reset or a fatigue call. Every round starts with a 20 s burst. Film two rounds.|6,180,45,plan,12,25","Finisher (GREEN days only)|1 set of 8 × 15 s all-out / 15 s easy|s|MAXIMUM effort for 15 s. Skip it if the readiness check is YELLOW or if form has gone.|8,15,15"],
+ mon:{o:"Layered combinations with a defence inside, against an opposite-stance opponent.",
+  tech:["Layered combos with two feints and a slip inside: 1-2, slip, hook, kick|5 × 2:00|s|The slip is part of the combination, not a pause. Film one round.|5,120,30","Opposite-stance shadow|3 × 2:00|s|Imagine an opponent in the opposite stance. Your lead foot goes outside their lead foot. Re-learn where your jab and cross land.|3,120,30","Max-speed combinations, full rest|5 × 6 s, rest 45 s|s|First rep fastest.|5,6,45"],
+  tact:["Opponent-type switching on cue|5 × 2:00|s|Cue says PRESSURE, COUNTER-PUNCHER, KICKER, CLINCHER or RETREATER. Change your plan within 2 s.|5,120,30,opp,12,25"]},
+ wed:{o:"Defend while retreating and while advancing, with decisions.",
+  def:["Defence against combinations, then counter by decision|5 × 3:00|s|No mapping this week. Pick the defence and counter yourself within one second.|5,180,45,defence,3,5","Defend moving forward and moving backward|3 × 2:00|s|Practise defence on the move, in both directions.|3,120,45"],
+  foot:["Footwork creates reactions: step-in fake, step-out counter|4 × 2:00|m|Create the imagined opponent's reaction with your feet, then punish it.|4,120,45,entry,4,7","Retreating opponent, hunting, tired|3 × 3:00|m|Do 10 squats first, then cut the ring.|3,180,45,retreat,5,8"]},
+ sat:{o:"The plan breaks and you have to change it.",
+  sc:["Style-switching rounds|4 × 3:00|s|Cue switches the opponent's style every 20–40 s. Write your plan against each style first.|4,180,45,opp,15,30","Plan A vs Plan B, chosen before the round|3 × 3:00|s|Plan A: pressure and punches. Plan B: range, teeps, low kicks. Switch only if your plan fails twice.|3,180,45,plan,15,30","Replay and rate decisions|10 min|s"],
+  opt:["COACH REQUIRED: light technical sparring, 3 × 2:00 at RPE 4, coach present, mouthguard, no head hunting|20 min|c|Not part of the main program."]}},
+{n:12,ph:2,nm:"Deload and Test 3",md:"TEST",tw:1,dl:1,rpe:[5,5,5,5,5],
+ r:["Quality review of Phase 3 techniques","Decision test at 2-second cues, including fatigued","Easy aerobic, then conditioning and repeat-effort tests","Strength tests; volume −45%, load of main lifts kept","Phase 3 assessment and final-week planning"],
+ chg:"Deload plus the third test. Volume drops by about 45%, speed and technique stay sharp, and you get the data to set your taper.",
+ iq:"Three rules|Pause a clip 5 times, predict and score. Then write 3 tactical rules you have learned this phase (for example 'never retreat in a straight line').",
+ me:"Confidence audit|10 min. Breathing for 3. Write the evidence list: what you can do now that you could not do in Week 1. Visualise the first plan round of Week 13.",
+ aer:"Easy aerobic flush|20:00 at RPE 3|s|LOW.|1,1200,0",
+ con:["Easy rounds, then speed|3 × 3:00 at RPE 4–5 / 60 s rest|s|LOW.|3,180,60"],
+ mon:{o:"Technical test day with zero grind.",
+  tech:["Layered combo at 80%: feint, 1-2, hook, low kick, exit|3 × 1:00|s|Stop at the first sloppy rep.|3,60,60","Speed rounds: max-speed straight punches|6 × 8 s on / 52 s off|s|Short, sharp, clean.|6,8,52"],
+  tact:["Opponent-type switching, light|2 × 2:00|s|RPE 4.|2,120,60,opp,20,30"]},
+ wed:{o:"Decision-making test at faster cue speed.",
+  def:["Defence and counter, light flow|3 × 2:00|s|Cues on, RPE 4.|3,120,60,defc,3,5"],
+  foot:["Footwork flow|2 × 2:00|m|RPE 3.|2,120,60"]},
+ sat:{o:"Easy filmed rounds and the game plans.",
+  sc:["Free shadow, one chosen plan|3 × 2:00 at RPE 4|s|Film.|3,120,60","Write your game plans A and B for the final week|15 min|s"],
+  opt:["COACH REQUIRED: ask a coach to review your plans|10 min|c"]}},
+{n:13,ph:3,nm:"Integrate and Taper",md:"TAPER",tw:1,dl:0,rpe:[6,5,5,8,7],
+ r:["Final technical test (clean and fatigued); game-plan combinations at 80% speed","Game plans A/B, round management, final decision test","Final conditioning test and short sharpness work; one fight simulation","Final physical tests; two light primer sets at RIR 4; two sets of jumps","Final tests, one fight simulation, minimum fatigue"],
+ chg:"Taper. No new techniques and no heavy lifting: fatigue drops, tests go first, and everything you learned runs together in one filmed fight simulation.",
+ iq:"Game planning and round management|Watch one full fight. Write a one-page game plan for each fighter against the other: what to do at each range, what to avoid, which exchanges to take and which to refuse. Then chart each fighter's energy by round and write your own R1, R2, R3 plan with one aim, one risk and one reset cue each.",
+ me:"Fight-day routine and emotional control|12 min. Breathing for 3. Write a pre-fight routine: wake, eat, warm-up, walk-out, first 10 seconds. Rehearse it from start to finish. Include one cue word each for fear, anger and fatigue. Practise a 60 s reset between rounds: breathe, one fix, one plan.",
+ aer:"Easy aerobic flush and strides|15:00 at RPE 3, then 4 × 20 s relaxed strides|s|LOW. Keep it light.|1,900,0",
+ con:["Sharpness bursts|4 × 8 s max-speed combinations, 45 s rest|s|Short, sharp, clean. Do not chase fatigue this week.|4,8,45"],
+ mon:{o:"Final technical test, clean and fatigued, then game-plan combinations at 80% speed.",
+  tech:["Game-plan combinations: 4 for plan A, 4 for plan B|3 × 2:00|s|Pressure plan: jab, cross, hook, knee. Range plan: teep, jab, low kick, step out. 80% speed.|3,120,45","Speed rounds: max-speed straight punches|6 × 8 s on / 52 s off|s|Short, sharp, clean.|6,8,52"],
+  tact:["Round script: R1 read, R2 push, R3 finish|2 × 3:00|s|R1: stay in range, collect information. R2: commit to the plan. Use the 60 s rest to reset.|2,180,60,plan,20,35"]},
+ wed:{o:"Final decision test, then short defence and counter sharpening.",
+  def:["Defence and counter, sharpness|3 × 2:00|s|RPE 6. Clean returns, quick decisions.|3,120,60,defc,3,5"],
+  foot:["Footwork-only round|2 × 2:00|m|Move, create angles and reactions, no strikes.|2,120,60"]},
+ sat:{o:"Final fight simulation: one plan, filmed, RPE 7.",
+  sc:["Fight simulation with a chosen plan|3 × 3:00 at RPE 7|s|Pick plan A or B before each round. The plan cue keeps you honest. Film it.|3,180,60,plan,20,35","Replay and one-page post-fight analysis|20 min|s|What worked, what failed, what you would change. Then write the next-block plan: 3 keep, 3 fix, 3 new."],
+  opt:["COACH REQUIRED: controlled fight simulation, 3 × 2:00, coach controls intensity and stops it|20 min|c|Not part of the main program."]}}
+];
+
+const FL=[
+ "Slow-motion shadow flow|2 × 2:00 at RPE 3|s|Half speed, perfect form, filmed or watched in a window reflection. Play with this week's combinations.|2,120,45",
+ "Flow shadow with an imagined opponent|2 × 3:00 at RPE 3|s|Slow-motion exchanges: attack, defence, counter at 50% speed. This is a skill session, not conditioning.|2,180,45",
+ "Slow-motion scenario flow|2 × 3:00 at RPE 3|s|Replay the hardest scenario from Saturday at half speed and fix the decision that went wrong.|2,180,45",
+ "Visualised round at half speed|2 × 3:00 at RPE 3|s|Run your game plan in slow motion. Smooth beats fast.|2,180,45"
+];
+const PHO={
+ tue:["Heavy loaded strength with tempo and pauses at RIR 2–3, then dense aerobic intervals. One of the two hard days.","Single-leg and paused strength at RIR 2, harder leverage on pushes and rows, then aerobic power at RPE 8. One of the two hard days.","Peak unilateral strength at RIR 1–2 with mechanical drop sets, then aerobic intervals with short rest. One of the two hard days.","Primer only. Light sets that keep the movements sharp. No grinding."],
+ fri:["Low-rep jumps and speed work while fresh, then conditioning with bursts. The other hard day.","Contrast and rotational power, then conditioning on cues and 1:1 work to rest. The other hard day.","Reactive power, then fight-specific conditioning with short rest and decisions while tired. The other hard day.","Sharpness only. Short, fast, fresh."],
+ thu:["Active recovery, mobility, one film study. Genuinely easy.","Active recovery, mobility with kick-height control, one film study. Genuinely easy.","Active recovery with loaded mobility, one film study and slow-motion scenario replay. Genuinely easy.","Active recovery, maintenance mobility, round-management study. Genuinely easy."]
+};
+const DNAME={mon:"Technical Development",tue:"Strength + Aerobic Base",wed:"Defence + Footwork",thu:"Recovery + Fight IQ",fri:"Power + Kickboxing Conditioning",sat:"Scenario Shadow-Sparring",sun:"Rest + Weekly Review"};
+const DMETA={mon:{d:65,c:"MODERATE"},tue:{d:75,c:"HARD"},wed:{d:60,c:"MODERATE"},thu:{d:40,c:"LOW"},fri:{d:70,c:"HARD"},sat:{d:55,c:"MODERATE"},sun:{d:30,c:"REST"}};
+const RPEI={mon:0,tue:1,wed:2,fri:3,sat:4,thu:-1,sun:-1};
+const DRPE={thu:3,sun:2};
+
+const TESTS=[
+ {id:"tt1",cat:"tech",n:"Filmed 3:00 shadow round score",how:"Film one 3-minute round at 70% speed. Score 0–2 on each: guard return, balance after kicks, kick pivot, hip rotation, feet never crossing, exits, exhale on strikes, no leaning back. Total out of 16.",u:"/16",dir:1,tag:"s"},
+ {id:"tt4",cat:"tech",n:"Fatigued round score",how:"Do 20 bodyweight squats, then film a 3-minute round at RPE 7 and score it on the same 16-point checklist.",u:"/16",dir:1,tag:"s"},
+ {id:"tt2",cat:"tech",n:"Target contact test",how:"Hang a towel over the top of a closed door and tuck a sock into the fold at chin height. Throw 20 light jabs and crosses that stop 2 cm short. Count clean, centred 'touches' on video.",u:"/20",dir:1,tag:"m"},
+ {id:"tt3",cat:"tech",n:"Kick balance test",how:"10 slow rear body kicks per side. Count landings with no hop, wobble or touch-down.",u:"/20",dir:1,tag:"s"},
+ {id:"pt1",cat:"phys",n:"Broad jump, best of 3",how:"Two-foot take-off, stick the landing. Measure from toes to heels.",u:"cm",dir:1,tag:"s"},
+ {id:"pt2",cat:"phys",n:"Countermovement jump height",how:"Stand side-on to a wall, mark standing reach with a pencil mark or tape, jump and touch as high as you can. Distance between marks.",u:"cm",dir:1,tag:"s"},
+ {id:"pt3",cat:"phys",n:"Rear-foot-elevated split squat, test pack, weaker leg",how:"Use the same pack with the same contents every time (about 10 kg, write down what is in it). 2 s down, no hands. Stop when the next rep would break form. Max reps on the weaker leg.",u:"reps",dir:1,tag:"m"},
+ {id:"pt4",cat:"phys",n:"Strict push-ups",how:"2 s down, full lockout, one set stopped at the first break in form.",u:"reps",dir:1,tag:"s"},
+ {id:"pt5",cat:"phys",n:"Feet-elevated table row",how:"Heels on a chair against a wall, body straight, chest to the table edge, 2 s down. Stop at the first break in form.",u:"reps",dir:1,tag:"m"},
+ {id:"pt6",cat:"phys",n:"Side plank, weaker side",how:"Hold to the first sag.",u:"s",dir:1,tag:"s"},
+ {id:"pt7",cat:"phys",n:"Hollow hold",how:"Low back pressed into the floor. Stop when your back lifts.",u:"s",dir:1,tag:"s"},
+ {id:"pt8",cat:"phys",n:"Single-leg calf raise, weaker side",how:"Bodyweight, 2 s up and 2 s down, full range, holding a wall for balance. Stop at the first break in form.",u:"reps",dir:1,tag:"s"},
+ {id:"dt1",cat:"dec",n:"Cue accuracy at 3 s intervals",how:"Use the Defence + counter cues, one every 3 s for 60 s (20 cues). Film. Count correct defence-then-counter responses.",u:"/20",dir:1,tag:"s"},
+ {id:"dt2",cat:"dec",n:"Cue accuracy at 2 s intervals",how:"Same test at 2 s intervals for 40 s (20 cues). Count correct responses.",u:"/20",dir:1,tag:"s"},
+ {id:"dt4",cat:"dec",n:"Fatigued cue accuracy at 3 s intervals",how:"Do 20 bodyweight squats, then run the 3 s cue test immediately. Count correct responses.",u:"/20",dir:1,tag:"s"},
+ {id:"dt3",cat:"dec",n:"Pause-and-predict score",how:"Pause a fight clip at 5 moments, write what happens next before you play. Count correct predictions.",u:"/5",dir:1,tag:"s"},
+ {id:"ct1",cat:"cond",n:"2.4 km time trial",how:"Flat route, even effort, as fast as you can sustain. If you can't run, do 6 rounds of 1:00 hard shadow with 30 s rest and record how many you complete at RPE 8.",u:"min",dir:-1,tag:"s"},
+ {id:"ct2",cat:"cond",n:"Technical fade score",how:"Film a 3:00 shadow round at RPE 7. Score guard return out of 10 for the first 30 s and the last 30 s. Record the drop.",u:"pts lost",dir:-1,tag:"s"},
+ {id:"ct3",cat:"cond",n:"Heart-rate recovery after a round",how:"Pulse count (or watch) at the end of a hard 3:00 round and again 60 s later. Record the drop in bpm.",u:"bpm",dir:1,tag:"s"},
+ {id:"ct5",cat:"cond",n:"Repeat-effort fade",how:"10 rounds of 10 s all-out shadow 1-2 pairs with 20 s rest. Count clean pairs (guard returns) in burst 1 and burst 10 on video. Record how many fewer you managed in burst 10.",u:"pairs lost",dir:-1,tag:"s",at:[0,2,4]},
+ {id:"ct4",cat:"cond",n:"Morning resting heart rate",how:"Average of 3 mornings before getting up.",u:"bpm",dir:-1,tag:"s"},
+ {id:"mt1",cat:"mob",n:"Active leg raise height (wall-side)",how:"Stand side-on to a wall, lift the straight leg without momentum, mark the ankle height.",u:"cm",dir:1,tag:"s"},
+ {id:"mt2",cat:"mob",n:"Deep squat hold, heels flat",how:"Hips below knees. Time until heels lift or you stand.",u:"s",dir:1,tag:"s"},
+ {id:"mt3",cat:"mob",n:"Knee-to-wall ankle test, weaker side",how:"Toe distance from the wall when your knee still touches it with the heel down.",u:"cm",dir:1,tag:"s"},
+ {id:"mt4",cat:"mob",n:"Pancake reach",how:"Legs wide, hinge forward. Measure how far your chest is from the floor.",u:"cm",dir:-1,tag:"s"}
+];
+const TCAT={tech:"Technical",phys:"Physical",dec:"Decision-making",cond:"Conditioning",mob:"Mobility"};
+const TDAY={mon:"tech",tue:"phys",wed:"dec",thu:"mob",fri:"cond"};
+
+const AUDIT=[
+ ["1 · What it did well","Consistent daily structure you could actually follow. A deload every fourth week. Mobility, balance and eyes-closed single-leg work (rare in home programs). A daily mental routine. A film-study slot. An honest warning against hard shin conditioning. Per-exercise timers and cues. These stay."],
+ ["2 · Unnecessarily repetitive","Two session templates covered 112 days. Technical + Power ran three times a week and Conditioning + Mobility ran three times a week, with the same exercises in the same order for 16 weeks. Week 1 and Week 16 asked for the same movements."],
+ ["3 · Progression that depended on volume","Every change was a lookup table of numbers: rounds 5→8, kick reps 15→22, burpees 10→15, plank 45→90 s, sprint rest 90→45 s. Nothing new was learned after Week 1. That is workload progression, not skill progression."],
+ ["4 · Poor transfer to kickboxing","Burpees at 15 reps (general fatigue, not kick-specific). Russian twists at 30 reps (low value, spinal flexion). Leg raises and 90-second planks (diminishing returns past 30–45 s). Jump squats at 22 reps (reps destroy the quality that makes them power work). Sprinting in place and mountain climbers as conditioning (not fighting rhythm)."],
+ ["5 · Underdeveloped skills","No hooks or uppercuts, no knees, no clinch. Defence was a sentence in the shadowboxing cue. No parry, slip or check drills. No feints, no counters, no angle work, no distance training. No reaction or decision training at all."],
+ ["6 · Weekly structure","Six training days with identical hard days is a poor stress pattern for a 3-month novice. High-impact work (jump squats, plyo lunges, burpees, sprints) ran six days a week. There was no easy training day, only a rest day. A ‘Technical + Power’ day that mixed 8 rounds of shadow with plyometrics hid the fact that neither was done fresh."],
+ ["7 · Strength and conditioning","General fitness circuit, not fighter preparation. No hinge or posterior-chain loading beyond glute bridges, no calf or ankle work, no rotation or anti-rotation, no loading progression beyond reps. No aerobic base. Conditioning was only anaerobic sprints."],
+ ["8 · Recovery","One rest day, a deload that was ‘same work, 40% fewer reps’, and no way to know when you were overreaching. Mobility only on conditioning days. Nothing to tell you to back off."],
+ ["9 · Fight IQ vs fitness","About 90% fitness. Fight IQ was one film-study item on Sunday, with no task and no link to what you trained."],
+ ["10 · What changes and why","Replace identical days with seven distinct sessions. Teach new skills each week instead of adding reps. Add defence, footwork, feints, counters and decisions, using a random cue timer in place of a partner. Make power low-rep and fresh. Add an aerobic base and three levels of conditioning intensity. Add deloads that keep speed, a readiness check, and tests that measure skill. Cut burpees, Russian twists, leg raises and long planks."]
+];
+const MISSING=[
+ "Defensive skills: parry, slip, cover, check, pivot-out.",
+ "Hooks, uppercuts, knees, clinch posture.",
+ "Footwork as a skill: box and L-steps, angles, pivots, ring cutting.",
+ "Distance training: range lines, range calls, range transitions.",
+ "Feints and what they are for.",
+ "Counters, and counters chosen by decision.",
+ "Reaction and decision training: random cues, A/B choices, scripted opponents.",
+ "An aerobic base and all three conditioning intensities.",
+ "Posterior chain, calves and ankles, rotation and anti-rotation.",
+ "Real recovery: an easy day, a deload that keeps speed, a readiness check.",
+ "Testing that measures skill, decisions and mobility as well as fitness.",
+ "An honest line between what solo training can and cannot teach."
+];
+const CHANGES=[
+ ["Length","Fourteen weeks became thirteen. Phase 1 is Weeks 1–3, Phase 2 Weeks 5–7, Phase 3 Weeks 9–11. Weeks 4, 8 and 12 are deload and test weeks. Week 13 merges the old Weeks 13 and 14: integration, fight simulation and taper."],
+ ["Strength","Every lift now has a ladder: more pack load, harder leverage, tempo, pauses, deeper range, one-sided versions and drop sets. See the S&C tab for week-by-week prescriptions with RIR targets."],
+ ["Power","Jump work moves from squat jumps to contrast pairs, single-leg jumps with rebounds, rotational jumps into strikes and cued jumps. Contacts are capped. Landings are always stuck."],
+ ["Conditioning","Density rises instead of duration: rest falls from 60 s to 45 s, bursts per set rise, work-to-rest reaches 1:1, and capacity work reaches three sets. Rounds run on random cues."],
+ ["Shadowboxing","Cues now cover defence, range, opponent style, A/B/C decisions, feint then reaction, defence then counter then angle, pressure, retreat and fatigue. Rounds are three minutes from Week 5 and plans from Week 7."],
+ ["Recovery","Thursday stays genuinely easy and Sunday stays rest. Tuesday and Friday are the two hard days. Monday, Wednesday and Saturday are hard in thought, not in volume."],
+ ["Equipment","Unchanged. Backpack, table, chair against a wall, towel, doorframe, floor, phone. No rope, bar, bands, dumbbells, bags or pads."]
+];
+const REAL=[
+ ["Realistic in 13 weeks, solo at home",["Cleaner stance, guard return, and kick balance.","Better kick mechanics and mobility.","Noticeably stronger single-leg strength, pushing and pulling.","A larger aerobic base and faster recovery between efforts.","Faster, more reliable defensive reflexes in shadow form.","A clear mental routine for fear, mistakes and fatigue.","A working vocabulary of combinations, feints and counters.","Better Fight IQ from structured film study."]],
+ ["Needs a partner, coach or years",["Timing and distance judgement against a live opponent.","Taking and absorbing impact. Solo work cannot teach this.","Reading real feints and real intent.","Actually checking, catching and blocking real kicks.","Clinch (pummelling, posture, sweeps, knees under pressure).","Shin conditioning.","Ring craft against resistance, and sparring experience.","Real fight IQ (this is built over years of rounds)."]]
+];
+const PERIOD=[
+ {n:"Phase 1 · Foundation",w:"Weeks 1–3 + deload Week 4",f:"Stance, guard, strikes and kicks, all four defences with counters, range lines, aerobic base. Loaded lifts at RIR 2–3.",s:"Week 1 learn and baseline test, Week 2 load and choice, Week 3 pause and chain, Week 4 deload and test."},
+ {n:"Phase 2 · Development",w:"Weeks 5–7 + deload Week 8",f:"Defence, counter and angle; feints; kick defence; pressure and ring cutting; heavier unilateral lifts; aerobic power at RPE 8.",s:"Weeks 5–7 build, Week 8 deload and test."},
+ {n:"Phase 3 · Intensification",w:"Weeks 9–11 + deload Week 12",f:"Random cues of three types, opponent-style switching, fatigue management, peak strength at RIR 1–2 with drop sets, capacity work and fight rounds.",s:"Week 9 everything random, Week 10 peak load, Week 11 peak and fight rounds, Week 12 deload and test."},
+ {n:"Phase 4 · Integration and taper",w:"Week 13",f:"Game plans, round management, final tests, one fight simulation, minimum fatigue.",s:"One week: tests first, sharpness work, one simulation."}
+];
+const SCHED=[
+ ["Mon","Technical Development","New skills, longer combinations, cues. Hard in thought, not volume.","65","6–7","MODERATE"],
+ ["Tue","Strength + Aerobic Base","Heavy single-leg, push, pull and trunk. Then aerobic intervals at RPE 6–8.","75","7–9","HARD"],
+ ["Wed","Defence + Footwork","Parry, slip, check, cover, pivots, angles, ring control, decisions.","60","6–7","MODERATE"],
+ ["Thu","Recovery + Fight IQ","Easy walk, mobility, film study, slow-motion flow.","40","2–3","LOW"],
+ ["Fri","Power + Kickboxing Conditioning","Low-rep jumps and rotation, then fight-specific conditioning.","70","7–9","HARD"],
+ ["Sat","Scenario Shadow-Sparring","Scripted and cued opponents, plans, fatigue decisions and replay.","55","6–8","MODERATE"],
+ ["Sun","Rest + Weekly Review","Walk, weekly review, prepare next week.","30","1–2","REST"]
+];
+const LOADN=[
+ "Two hard days per week: Tuesday and Friday. They are 72 hours apart and never back-to-back.",
+ "Three moderate days: Monday, Wednesday, Saturday. These are skill days that are hard because of complexity and decisions, not volume. Effort stays at RPE 6–7 until the peak weeks, when Saturday reaches 8.",
+ "One easy day: Thursday. It is a recovery session, not a day off from effort in disguise.",
+ "One rest day: Sunday. Only a walk and the weekly review.",
+ "Weekly total is about 6.5 hours of training plus the daily mental routine (10–15 min).",
+ "Impact (jumps and hops) happens on Friday only, capped at about 50 ground contacts, and every landing is held for 2 s.",
+ "Major lifts stay at 1–2 reps in reserve. Nothing goes to failure. Drop sets use easier versions of the same movement, not extra heavy sets."
+];
+const DELOAD=[
+ ["Volume","Sets, rounds and reps drop by about 45%. Fewer sets and rounds, not slower ones."],
+ ["Intensity","Speed and sharpness stay: 4–6 short max-speed efforts per session with full rest. Most work is at RPE 4–5. Main-lift loads stay near the previous level but at 2 sets and RIR 4."],
+ ["Jumps and conditioning","Fewer jumps (2 sets). Conditioning becomes easy rounds plus short speed bursts."],
+ ["Recovery","Thursday is unchanged. Add 45 minutes of sleep if you can."],
+ ["Assessment","Every day from Monday to Friday carries tests (see the Tests tab). They go first, while you are fresh."],
+ ["Planning","On Saturday, write your three priorities for the next phase from the leaks and test results."]
+];
+const LOADLV=[
+ ["BW","Bodyweight only."],
+ ["L1","Light pack. A few books or two filled water bottles."],
+ ["L2","Medium pack. Roughly 9–12 kg. Books plus a couple of filled bottles."],
+ ["L3","Heavy pack. Roughly 13–17 kg. A full bag of books plus water."],
+ ["L4","Heaviest pack you can carry safely and hold at the chest, roughly 18 kg or more. If L4 is too light for the set, use the slower tempo or pause instead of more weight."]
+];
+const RPEG=[
+ ["RPE 6","About 4 reps left in the tank"],["RPE 7","About 3 reps left"],["RPE 8","About 2 reps left (RIR 2)"],["RPE 9","About 1 rep left (RIR 1)"],["RPE 10","Nothing left. Not used on major lifts."]
+];
+const SAFE_OK=["Muscle burn during a set and heavy legs afterwards.","Breathlessness during intervals that settles within a few minutes.","Mild muscle soreness 24–48 hours later that eases as you warm up.","General tiredness at the end of a hard week.","Stiffness that fades in the first 10 minutes of the warm-up."];
+const SAFE_STOP=["Sharp, stabbing or pinching pain in a joint, tendon or the lower back.","Pain that changes how you move or limp.","Pain that is rising during the session, or still there 72 hours later.","Numbness, tingling or pain that shoots into an arm or leg.","Swelling or a joint that feels unstable.","Dizziness, chest pain, feeling faint or unusual breathlessness.","Headache, dizziness, nausea or confusion after any head knock.","Achilles, patellar or elbow tendon pain that builds with each set."];
+const SAFE_SETUP=["Chairs and tables go against a wall. Test every piece of furniture by leaning on it before you use it. No couch or sofa for anchoring your feet.","Clear 2 × 2 m of floor. Non-slip surface. Land jumps quietly and freeze the landing.","Never strike a wall, door, furniture or any hard object. Every kick stops 5 cm short of full extension. Hold a doorframe only for balance, never to strike.","Pack straps tight, pack held at the chest or worn on the back. Never swing a loaded pack.","No hard shin conditioning. No neck loading.","Do not train through sharp pain, and never to failure on major lifts."];
+const SKILLS=[
+ ["Jab","Clean straight mechanics, snap-back, head and body height, jab with a step in and out. Filmed check from Week 1.","Jab as rangefinder and feint: double jab, pawing jab, jab off an angle, jab then slip.","Jab under random cues. Jab to set up kicks (jab then teep). 10-second speed bursts with form.","Jab dictates range through a full round against a scripted opponent."],
+ ["Cross","Rear-foot pivot, hip then shoulder, chin behind the lead shoulder. Cross after the jab.","Cross as a counter over a parry. Cross into hook. Cross off an angle.","Cross counters from random defence cues. Power with balance, no lunging.","Cross chosen from opponent-reaction scripts. Finishing shot in layered combinations."],
+ ["Hook","Lead hook mechanics from Week 1: pivot, level elbow, short arc. Jab–cross–hook chains in Weeks 1–3.","Hook after a slip and to the body. Hook–uppercut–knee. Rear hook introduced.","Hook in layered combinations and off a check. Hook at the start and end of 3-punch sequences.","Hook as a read-based counter to a scripted pressure fighter."],
+ ["Uppercut","Introduced in Week 2: mechanics, then jab–cross–hook–uppercut–cross in Week 2 and 3.","Uppercut in close-range combinations. Hook, uppercut, knee, exit.","Uppercut as a counter to a head-down opponent. Uppercut into hook.","Uppercut chosen at CLOSE range when the imagined opponent crowds."],
+ ["Low kick","Pivot, hip turn, shin through, slow. Stop 5 cm short of extension. Chains with exits from Week 1.","Low kick from 45° angles. Check, then low kick. Doubles with a body kick.","Low kick as the end of layered combinations. Speed work. Doubles from a jab.","Selected by script (opponent covers high) and by range."],
+ ["Body kick","Chamber, lean away, hand on the chin. Slow mechanics (Week 1), speed work (Week 2).","Body kick after a feint. Body-kick combinations. Recover to stance.","Body and low kick doubles. Defend straight after.","Chosen by range and opponent type."],
+ ["Head kick","None. Mobility and kick-height holds only.","Controlled-height mechanics from Week 5 as flexibility allows, after a warm-up.","End of a layered combination, only after a body feint. Low frequency.","Used rarely, when an imagined opponent's guard drops."],
+ ["Teep","Knee up, extend, retract. Lead teep for range.","Teep with a feint. Teep to stop an advance.","Rear teep. Teep then punches. Teep for ring control.","Range-keeping tool in plan B."],
+ ["Knees","Mechanics only, introduced in Week 3: straight knee, lead and rear.","Punch–knee–exit (Week 6). Hook, uppercut, knee, exit (Week 7).","Knee after a hook. Solo clinch-entry rehearsal.","Close-range answer on the BREAK call. Real clinch needs a partner."],
+ ["Defence (guard)","Guard shell, chin down, elbows in, guard return after every strike.","Defence with an immediate counter and a new angle.","Defence against 3-hit combinations on random cues.","Defence under pressure and under fatigue."],
+ ["Blocking","Cover and rotate. Shin-check positions.","Block then counter. Block then pivot.","Block under combinations. Cover then counter.","Block chosen by opponent type."],
+ ["Parrying","Rear-hand parry to the jab line, return to guard. Parry then cross from Week 1.","Parry, counter, pivot out. Parry then feint.","Parry against combinations. Parry then slip layering.","Parry used to read range while advancing."],
+ ["Kick checking","Check position holds and balance. (Solo trains the shape, not the impact.)","Check, counter, angle. Check against low and body kicks.","Check chains with counters. YELLOW cue.","Checks at fight pace and fatigued, mixed with step-outs."],
+ ["Head movement","Doorframe slips, knees bend.","Slip then counter. Roll under hooks.","Doorframe slips under random cues. 3-punch exits.","Head movement as the default response in rounds."],
+ ["Footwork","Stance, box step, L-step. Feet never cross.","Enter and exit. 45° angles. Pivots. Range cues.","Ring cutting. Circle and cut on cue. Direction changes. Hunting a retreating opponent.","Footwork creates reactions, combined with attack and defence."],
+ ["Distance management","Range lines on the floor. Reach and kick range.","Range recognition with cues. Range transitions.","Manipulating range: step back to draw an imagined entry.","Adapt range to the opponent type."],
+ ["Feints","None until the base techniques are clean.","Shoulder, foot and level feints (Week 5). Feint then punish a named reaction (Week 6).","Feints inside layered combinations. Double feints. Feint, read, counter on cue.","Feints chosen to create specific reactions."],
+ ["Counters","Parry and return from Week 1.","Defence into immediate counter pairs. Counter then angle. Counter the counter.","Counters against combinations. Counter after a check, by your own decision.","Counter selection from opponent scripts."],
+ ["Combinations","1–2–hook–kick–exit (five beats) in Week 1.","Four to six beats with exits and a defensive reaction. Layered with feints.","Six-to-seven beat layered combinations with a slip inside.","Reaction-based and plan-based combinations."],
+ ["Clinch","None.","Knee mechanics only. Solo posture rehearsal (Week 7).","Collar-tie entry posture solo. Exit.","Solo rehearsal only. Real clinch needs a partner and coach."]
+];
+const IQWATCH=[
+ ["Weeks 1–4","How far apart are the fighters? Who steps in first? Which strikes happen at which range? What does each fighter's stance and guard look like? Which hand is up when the other fighter attacks?"],
+ ["Weeks 5–8","What does each fighter do in the first second after being hit? Which feints cause a reaction and what is the reaction? What counters follow which defences? How does pressure change the opponent's behaviour?"],
+ ["Weeks 9–12","What changes between rounds? What are each fighter's tells (shoulder drop, weight shift)? Who controls the centre? How do fighters escape corners? Which exits work?"],
+ ["Week 13","What was each fighter's plan and did it change? Where did energy go round by round? What would you tell each fighter between rounds?"]
+];
+const SCWHY=[
+ ["Backpack squat, paused squat, shrimp squat","Lower-body strength, then the hardest unilateral squat. Every kick and pivot is a single-leg movement.","Backpack, towel, doorframe for balance","Barbell squat, dumbbell split squat"],
+ ["Loaded and rear-foot-elevated split squat","Unilateral strength and range. Builds the pivot-leg strength that kicks depend on.","Backpack, chair against a wall","Dumbbell Bulgarian split squat"],
+ ["Single-leg Romanian deadlift","Posterior chain: hip extension for kicks, hamstring protection on kick recovery.","Backpack","Barbell RDL"],
+ ["Push-up ladder: tempo, decline, pike, archer","Upper-body pushing for punching and bracing, from tempo to one-sided versions.","Chair against a wall","Bench press, dumbbell press"],
+ ["Table row ladder: flat, loaded, feet-elevated","Upper-body pulling to balance pressing and protect the shoulders.","Sturdy table, chair, backpack","Pull-up bar, cable row"],
+ ["Dead bug ladder","Trunk anti-extension with long levers and load. Force passes through the trunk to the fist and shin.","Backpack","Cable work"],
+ ["Side plank, backpack drag, towel body saw","Anti-rotation and trunk stiffness. Keeps the hips still while the limbs move.","Backpack, towel","Pallof press, cable work"],
+ ["Calf raise ladder","Ankle strength and stiffness for fast pivots.","Backpack, a thick book","Weighted calf raise"],
+ ["Jumps, bounds, rotational jumps, contrast pairs","Rate of force development: how quickly you produce force matters more than how much.","Backpack","Box jumps, medicine ball slams"]
+];
+const ENERGY=[
+ ["Aerobic base","LOW (RPE 3–4)","Thursday walks, deload flushes, taper week","Foundation for everything else: recovery between rounds and between sessions.","Thu, Weeks 4, 8, 12, 13"],
+ ["Aerobic power","HIGH (RPE 7–8)","4 × 4:00 up to 6 × 3:00 with 60–90 s rest","Raises the ceiling of the aerobic system. Rounds of 3:00 at fight pace.","Tue (Weeks 1–11)"],
+ ["Repeat-effort ability","HIGH (RPE 8)","Burst and cruise rounds, 6–8 × 10–15 s with 15–20 s rest","Fights are repeated 5–10 s bursts with short recoveries.","Fri (Weeks 2–7)"],
+ ["Anaerobic capacity","MAXIMUM, limited (RPE 9 for 15–20 s)","1 set in Week 9, 3 × (6 × 20 s / 30 s) in Week 10, 8 × 15 s in Week 11 on GREEN days","Teaches you to keep technique when the burn arrives.","Fri (Weeks 9–11)"],
+ ["Recovery between exchanges","HIGH (RPE 7–8)","Random-cue, pressure and fight rounds with 45 s rest","Cues interrupt you the way a real exchange does.","Fri and Sat"],
+ ["Technical quality under fatigue","HIGH","Squats-then-shadow rounds, fatigue-cue rounds, rounds that start with a burst","Skill when tired is the real test.","Mon, Wed, Sat (Weeks 3–11)"]
+];
+const SPAR=[
+ ["Stage 0 · Weeks 1–2","Scripted opponent with two or three lines","3–4 rounds × 2:00","RPE 6","Focus: guard return, balance, clean exits, A/B decisions. Avoid: speed and power for their own sake."],
+ ["Stage 1 · Weeks 3–4","Range-called and A/B/C scenarios","3–4 rounds × 2:00","RPE 6–7","Focus: decide inside one second, commit. Avoid: hesitation, throwing every option."],
+ ["Stage 2 · Weeks 5–7","Feint, reaction and counter; pressure and retreat scenarios","4–5 rounds × 3:00","RPE 7","Focus: angles, range, reading your own script, ring cutting. Avoid: forcing combinations."],
+ ["Stage 3 · Weeks 9–10","Random cues of three types in the same round; fatigue-cue rounds","4–5 rounds × 3:00","RPE 7–8","Focus: defence then counter inside a second, decisions after bursts. Avoid: panic speed."],
+ ["Stage 4 · Week 11","Opponent-style switching, game plans that must change mid-round","4–6 rounds × 3:00","RPE 8","Focus: adapt your plan within 2 seconds. Avoid: sticking to a plan that fails."],
+ ["Stage 5 · Week 13","Fight simulation with a plan, on film","3 rounds × 3:00","RPE 7","Focus: plan execution, round management, composure. Avoid: all-out effort in round 1."]
+];
+const SPAR_OPT=[
+ ["Technical partner flow","Trained partner, no force, 3 × 2:00","RPE 3","Fixed pattern: you jab, partner parries, swap. Helps timing."],
+ ["Constrained sparring","Coach present, one rule per round (jab-only, kicks only)","RPE 4","Builds range and timing under rules."],
+ ["Light technical sparring","Coach present, 3 × 2:00, touch contact","RPE 4","Mouthguard, shin guards, groin protection."],
+ ["Moderate situational sparring","Coach designed scenarios, 3–4 × 2:00","RPE 5–6","Cornered, pressure, counters with limited contact."],
+ ["More open sparring","At most once every two weeks, 3 rounds","RPE 6","Never in deload weeks and never on a RED day."],
+ ["Controlled fight simulation","Coach controls, 3 × 2:00","RPE 6","Only at the end of the program."]
+];
+const SPAR_RULES=[
+ "Hard sparring is not part of this program. It's only ever coach-run.",
+ "Never deliberately take head trauma. Head contact stays at touch level.",
+ "Never spar in a deload week or on a RED readiness day.",
+ "Stop any round after a head blow with headache, dizziness, nausea or confusion. Get medical help.",
+ "If you take any head knock with symptoms, stop all training and see a medical professional before returning."
+];
+const AUTO=[
+ ["GREEN","Total 0–4 and no pain","Run the session as written."],
+ ["YELLOW","Total 5–8, or mild pain (1), or your last two RPEs were 2 or more above plan","Drop one set or round from every block (about a third). Cap effort at RPE 6. No max-effort efforts, no drop sets, no finisher. Keep technique work and the daily mental routine."],
+ ["RED","Total 9+, or moderate pain (2+), or severe soreness, or any red flag","Replace the session with recovery: 20 min walk, mobility circuit, 10 min breathing. If RED two days in a row, or pain lasts more than 72 hours, speak to a coach, physio or doctor. Any dizziness, nausea, headache or confusion after a head knock: stop and get medical help."]
+];
+const RULES=[
+ "Complete the readiness check before every session. Obey the colour.",
+ "Technique before speed, speed before volume.",
+ "If the guard stops returning, the round ends.",
+ "Never add reps to a deload week.",
+ "Film one round every week and replay it on Saturday.",
+ "Exit after every attack. Standing still is a mistake.",
+ "Kicks stop 5 cm short of full extension. The knee is not a target.",
+ "Strike nothing solid. No hard shin conditioning.",
+ "Jump work only on Friday, and stop the set when height or speed drops.",
+ "Two hard days a week. No more.",
+ "Decide inside one second when the cue calls.",
+ "Rehearse mistakes in the mind: miss, breathe, reset, continue.",
+ "The Thursday walk is training. Do not skip it.",
+ "Sleep counts as a training session. Aim for 8 hours.",
+ "Every set on a major lift ends with 1–2 reps in reserve. Nothing goes to failure.",
+ "Pain that changes how you move is a RED day. Do not train through sharp pain.",
+ "Head knocks with symptoms mean stop and see a medical professional.",
+ "No sparring, ever, without a coach and protective gear.",
+ "Write the weekly review on Sunday, even when the week was bad.",
+ "Judge yourself on the test scorecard, not on how a session felt."
+];
+const TAPENOTE="Partner, coach and gym options are listed as optional extras only. Nothing in the main program needs them.";
+
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DT=['mon','tue','wed','thu','fri','sat','sun'];
+const DL=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAB={mon:'TE',tue:'ST',wed:'DF',thu:'RC',fri:'PW',sat:'SC',sun:'OF'};
+const TOTAL=91;
+function pad(n){return String(n).padStart(2,'0')}
+function ld(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function it(str){
+ const p=str.split('|');
+ const o={name:p[0],spec:p[1]||'',tag:p[2]||'s',cue:p[3]||''};
+ if(p[4]){const q=p[4].split(',');o.timer={rounds:+q[0]||1,work:+q[1]||60,rest:+q[2]||0,cue:q[3]||null,cmin:+q[4]||0,cmax:+q[5]||0};
+  if(o.timer.cue&&CUES[o.timer.cue])o.cue+=' Cue calls: '+CUES[o.timer.cue].map}
+ return o;
+}
+
+/* ---------- state ---------- */
+let S=null;
+try{S=JSON.parse(localStorage.getItem('fc13')||'null')}catch(e){S=null}
+if(!S||typeof S!=='object')S={};
+S.day=S.day||1; S.logs=S.logs||{}; S.rdy=S.rdy||{}; S.tests=S.tests||{}; S.rev=S.rev||{}; S.tab=S.tab||'today'; S.theme=S.theme||null;
+let flagT=null;
+function save(){
+ try{localStorage.setItem('fc13',JSON.stringify(S))}catch(e){}
+ const f=$('#flag');f.classList.add('show');clearTimeout(flagT);flagT=setTimeout(()=>f.classList.remove('show'),1000);
+}
+function applyTheme(){
+ const r=document.documentElement;
+ if(S.theme)r.setAttribute('data-theme',S.theme);else r.removeAttribute('data-theme');
+ $('#themeBtn').textContent='Theme: '+(S.theme||'auto');
+}
+function wkOf(di){return Math.ceil(Math.min(di,TOTAL)/7)}
+function curWeek(){return wkOf(S.day)}
+
+/* ---------- session builder ---------- */
+const LV={BW:'bodyweight',L1:'pack L1',L2:'pack L2',L3:'pack L3',L4:'pack L4'};
+function famSpec(t){
+ const u=t[7]==='leg'?' per leg':t[7]==='side'?' per side':'';
+ return t[1]+' × '+t[2]+u+' · tempo '+t[3]+' · '+(LV[t[4]]||t[4])+(t[5]!==''&&t[5]!==undefined?' · RIR '+t[5]:'')+(t[6]?' · + drop set':'');
+}
+function famItem(f,t,pre){
+ const heavy=t[4]!=='BW'||/chair|Feet|Decline|Pike|Rear-foot|rear-foot|Table|table|Towel|towel|Plank|book/.test(t[0]);
+ let cue=(f.vn[t[0]]||'')+' '+f.c;
+ if(t[6])cue+=' '+t[6]+'.';
+ if(t[4]!=='BW')cue+=' Load level '+t[4]+' is defined in the Plan tab.';
+ return {name:(pre?pre+' · ':'')+t[0],spec:famSpec(t),tag:heavy?'m':'s',cue:cue.trim()};
+}
+function strItems(W){
+ return FAMS.map(f=>famItem(f,f.w[W.n-1],f.lab));
+}
+function calfItems(W){
+ return [famItem(CALF,CALF.w[W.n-1],'')];
+}
+function powItems(W){
+ const a=PFAMS.map(f=>{
+  const t=f.w[W.n-1];
+  const it0={name:t[0],spec:t[1]+' × '+t[2]+' · rest '+t[3]+(t[4]?' · '+t[4]:''),tag:/pack|Decline|Clap|clap/.test(t[0]+(t[4]||''))?'m':'s',cue:((f.vn[t[0]]||'')+' '+f.c+' Stop the set when height or speed drops.').trim()};
+  if(t[0]==='Cued jump direction')it0.timer={rounds:5,work:4,rest:90,cue:'jdir',cmin:3,cmax:3},it0.cue+=' Cue calls: '+CUES.jdir.map;
+  if(t[0]==='Rotational jump, cued strike')it0.timer={rounds:4,work:5,rest:90,cue:'defc',cmin:2,cmax:2},it0.cue+=' Cue calls: '+CUES.defc.map;
+  return it0;
+ });
+ a.push(it(SPEED[W.n-1]));
+ return a;
+}
+function testItems(W,day){
+ if(!W.tw)return [];
+ const cp=TESTW.indexOf(W.n);
+ return TESTS.filter(x=>x.cat===TDAY[day]&&(!x.at||x.at.includes(cp))).map(x=>({name:'TEST · '+x.n,spec:'Record in Tests ('+x.u+')',tag:x.tag,cue:x.how+' Enter the result in the Tests tab.'}));
+}
+function sess(di){
+ di=Math.max(1,Math.min(TOTAL,di));
+ const w=wkOf(di),d=(di-1)%7,t=DT[d],W=WEEKS[w-1],ph=W.ph,X=W[t]||{};
+ const blocks=[];
+ const add=(name,arr,opt)=>{
+  if(!arr||!arr.length)return;
+  const bi=blocks.length;
+  blocks.push({name,opt:!!opt,items:arr.map((o,i)=>{const x=typeof o==='string'?it(o):Object.assign({},o);x.id=t+bi+'_'+i;return x})});
+ };
+ add(t==='sun'?'Recovery':'Warm-up',WARM[t]);
+ if(t==='mon'){
+  add('Technical block',X.tech);add('Technical tests',testItems(W,t));add('Tactical block',X.tact);
+  add('Physical block · calves and balance',calfItems(W).concat([it('Single-leg balance'+(W.n>=5?', eyes closed':'')+'|2 × 30 s per side|s|Soft knee, hips level. Reset at once if you touch down. Balance on the pivot foot decides how clean every kick is.')]));
+ }else if(t==='tue'){
+  add('Physical tests',testItems(W,t));
+  add('Physical block · strength (supersets A, B, C, then D)',strItems(W));
+  add('Physical block · aerobic',[W.aer]);
+ }else if(t==='wed'){
+  add('Decision tests',testItems(W,t));
+  add('Technical block · defence',X.def);add('Tactical block · footwork',X.foot);
+ }else if(t==='thu'){
+  add('Mobility tests',testItems(W,t));
+  add('Recovery block · mobility',MOB[ph]);
+  const q=W.iq.split('|');
+  add('Tactical block · Fight IQ',['Fight IQ · '+q[0]+'|30 min|s|'+q[1]+' Write 3 observations in today\'s note.']);
+  add('Technical block · slow-motion flow',[FL[ph]]);
+ }else if(t==='fri'){
+  add('Physical block · power',powItems(W));
+  add('Conditioning tests',testItems(W,t));
+  add('Conditioning block',W.con);
+ }else if(t==='sat'){
+  add('Tactical block · scenarios',X.sc);
+ }else{
+  const rv=['Weekly review|10 min|s|Open the Review tab and complete this week\'s review.'];
+  if(W.tw)rv.push('Scorecard|10 min|s|Enter this week\'s test results in the Tests tab.');
+  add('Review',rv);
+ }
+ const mq=W.me.split('|');
+ add('Mental block',['Mental routine · '+mq[0]+'|'+(t==='sun'?'8 min':'12 min')+'|s|'+mq[1]]);
+ add(t==='sun'?'Preparation':'Cool-down',[COOL[t]]);
+ if(t==='sat')add('Optional · partner, coach or gym',X.opt,true);
+ const m=DMETA[t];
+ let obj=t==='tue'||t==='fri'||t==='thu'?PHO[t][ph]:(t==='sun'?'Rest, review the week and prepare the next one.':X.o);
+ if(W.tw&&TDAY[t])obj+=' Test day: '+TCAT[TDAY[t]].toLowerCase()+' tests go first, while you are fresh.';
+ const fac=W.dl?0.7:(W.n===13?0.8:1),ri=RPEI[t];
+ const rp=ri>=0?W.rpe[ri]:DRPE[t];
+ return {di,w,d,t,W,ph,title:DNAME[t],obj,dur:Math.round(m.d*fac/5)*5,rpe:rp,cls:m.c,blocks};
+}
+
+/* ---------- readiness ---------- */
+const RDYF=[
+ ['sl','Sleep last night',['7.5 h or more','6.5–7.5 h','under 6.5 h']],
+ ['so','Soreness',['none','mild','moderate','severe or limiting']],
+ ['en','Energy',['high','okay','low','flat']],
+ ['mo','Motivation',['high','okay','low','none']],
+ ['pn','Pain',['none','mild (3/10 or less, movement unchanged)','moderate (changes how you move)','sharp, swollen or numb']],
+ ['hr','Resting heart rate',['within +4 bpm or not tracked','+5 to +7 bpm','+8 bpm or more']]
+];
+function perfFlag(){
+ const ds=Object.keys(S.logs).map(Number).filter(d=>S.logs[d].at&&S.logs[d].rpe>0&&d<S.day).sort((a,b)=>b-a).slice(0,2);
+ if(ds.length<2)return false;
+ return ds.every(d=>{const s=sess(d);return S.logs[d].rpe-s.rpe>=2});
+}
+function rdyCalc(r){
+ if(!r)return null;
+ const sc=(r.sl|0)+(r.so|0)+(r.en|0)+(r.mo|0)+(r.hr|0);
+ let st='GREEN';const why=[];
+ if(r.rf){st='RED';why.push('red-flag symptom')}
+ if(r.pn>=2){st='RED';why.push('pain that changes movement')}
+ if(r.so>=3){st='RED';why.push('severe soreness')}
+ if(sc>=9){st='RED';why.push('score '+sc)}
+ if(st!=='RED'){
+  if(sc>=5){st='YELLOW';why.push('score '+sc)}
+  if(r.pn===1){st='YELLOW';why.push('mild pain')}
+  if(perfFlag()){st='YELLOW';why.push('last two sessions ran 2+ RPE over plan')}
+ }
+ return {sc,st,why};
+}
+const RDYTXT={GREEN:'Run the session as written.',YELLOW:'Drop one set or round from every block (about a third). Cap effort at RPE 6. No max-effort or maximal jumps. Keep all technique work and the mental routine.',RED:'Replace today with recovery: 20 min walk, the Thursday mobility circuit and 10 min of breathing. If RED two days running, or pain lasts over 72 hours, speak to a coach, physio or doctor. Dizziness, nausea, headache or confusion after a head knock: stop and get medical help.'};
+
+/* ---------- streaks ---------- */
+function streaks(){
+ const ds=new Set(Object.values(S.logs).filter(l=>l.at&&l.date).map(l=>l.date));
+ let cur=0;const c=new Date();
+ if(!ds.has(ld(c)))c.setDate(c.getDate()-1);
+ while(ds.has(ld(c))){cur++;c.setDate(c.getDate()-1)}
+ const arr=[...ds].sort();let best=0,run=0,prev=null;
+ arr.forEach(s=>{
+  const d=new Date(s+'T00:00:00');
+  if(prev&&Math.round((d-prev)/86400000)===1)run++;else run=1;
+  best=Math.max(best,run);prev=d;
+ });
+ return {cur,best:Math.max(best,cur)};
+}
+
+/* ---------- views ---------- */
+const OPEN=new Set();
+function tg(x){return '<span class="tg tg-'+x.tag+'">'+TG[x.tag]+'</span>'}
+function itemLive(x,done){
+ return '<div class="ex"><div class="ex-row"><button class="ck'+(done?' on':'')+'" data-act="ck" data-id="'+x.id+'" aria-label="Mark done: '+esc(x.name)+'" aria-pressed="'+(done?'true':'false')+'">✓</button>'
+ +'<div class="ex-main"><div class="ex-name'+(done?' dn':'')+'">'+esc(x.name)+'</div><div class="ex-spec">'+esc(x.spec)+'</div>'+tg(x)+'</div>'
+ +'<div class="ex-btns">'+(x.timer?'<button class="btn sm" data-act="tm" data-id="'+x.id+'">▶ Timer</button>':'')+(x.cue?'<button class="btn sm ghost" data-act="how" data-id="'+x.id+'">how</button>':'')+'</div></div>'
+ +(x.cue?'<div class="ex-cue'+(OPEN.has(x.id)?' open':'')+'" id="cue_'+x.id+'">'+esc(x.cue)+'</div>':'')+'</div>';
+}
+function itemStatic(x){
+ return '<div class="ex static"><div class="ex-row"><div class="ex-main"><div class="ex-name">'+esc(x.name)+'</div><div class="ex-spec">'+esc(x.spec)+'</div>'+tg(x)+'</div></div>'+(x.cue?'<div class="ex-cue static">'+esc(x.cue)+'</div>':'')+'</div>';
+}
+function blocksH(s,live,done){
+ return s.blocks.map(b=>'<div class="blk'+(b.opt?' opt':'')+'"><h4>'+esc(b.name)+(b.opt?' · not required':'')+'</h4>'+b.items.map(x=>live?itemLive(x,done.has(x.id)):itemStatic(x)).join('')+'</div>').join('');
+}
+function reqIds(s){const a=[];s.blocks.forEach(b=>{if(!b.opt)b.items.forEach(x=>a.push(x.id))});return a}
+
+function vToday(){
+ if(S.day>TOTAL){
+  return '<section class="sec"><h2>Program complete</h2><p class="lead">You finished all 13 weeks. Open Tests for the scorecard and Review for the final week. Write the next block from the three keeps, three fixes and three new items.</p></section>';
+ }
+ const s=sess(S.day),W=s.W,lg=S.logs[S.day]||{done:[],note:'',rpe:0,q:0,fix:''};
+ const done=new Set(lg.done||[]),req=reqIds(s),n=req.filter(i=>done.has(i)).length;
+ const r=S.rdy[S.day],rc=rdyCalc(r),complete=!!lg.at;
+ let h='<section class="sec"><div class="hero"><div class="row"><span class="pill tp">'+esc(PHN[s.ph])+'</span><span class="pill">Week '+s.w+' · '+W.md+'</span>'+(W.dl?'<span class="pill">DELOAD</span>':'')+(W.tw?'<span class="pill tp">TEST WEEK</span>':'')+'</div>'
+ +'<div class="day">Day '+S.day+'<span> / '+TOTAL+'</span></div><h3 style="font-size:24px;text-transform:uppercase">'+DL[s.d]+' · '+esc(s.title)+'</h3>'
+ +'<div class="mono dim" style="font-size:12px">'+esc(W.nm)+' · about '+s.dur+' min · RPE '+(s.rpe>3?'up to ':'')+s.rpe+' · '+s.cls+(W.dl?' · capped for deload':'')+'</div></div>';
+ if(!Object.keys(S.logs).length)h+='<div class="card"><b>Start here.</b> You begin at Day 1 (Week 1, Monday). Your 3 months of training count, so Week 1 is calibrated to feel manageable. Baseline tests are built into Week 1. Each day: readiness check, then the checklist, then log it.</div>';
+ h+='<div class="card"><div class="row" style="justify-content:space-between"><b>Week '+s.w+' vs last week</b></div><p class="dim" style="margin-top:4px">'+esc(W.chg)+'</p><p style="margin-top:8px"><b>Why today:</b> '+esc(s.obj)+'</p></div>';
+ h+='<div class="card"><h3 style="font-size:20px;text-transform:uppercase;margin-bottom:10px">Readiness check</h3><div class="rdy">'
+ +RDYF.map(f=>'<label>'+f[1]+'<select data-act="rdy" data-k="'+f[0]+'">'+f[2].map((o,i)=>'<option value="'+i+'"'+(r&&(r[f[0]]|0)===i?' selected':'')+'>'+o+'</option>').join('')+'</select></label>').join('')
+ +'</div><label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px"><input type="checkbox" data-act="rf" '+(r&&r.rf?'checked':'')+'> Headache, dizziness, nausea or vision change since a head knock</label>';
+ if(rc)h+='<div class="st '+rc.st+'" style="margin-top:12px"><b>'+rc.st+' · score '+rc.sc+'</b>'+(rc.why.length?'<span class="mono" style="font-size:11px"> · '+esc(rc.why.join(', '))+'</span>':'')+'<p>'+esc(RDYTXT[rc.st])+'</p></div>';
+ else h+='<p class="dim" style="margin-top:10px;font-size:13px">Set the six answers (change any one) to see today\'s colour.</p>';
+ h+='</div>';
+ h+='<div class="card"><div class="row" style="justify-content:space-between"><b>'+n+' / '+req.length+' required items done</b><span class="mono dim" style="font-size:12px">'+(complete?'Day logged ✓':'in progress')+'</span></div><div class="bar" style="margin-top:8px"><i style="width:'+(req.length?n/req.length*100:0)+'%"></i></div>'+blocksH(s,true,done)+'</div>';
+ h+='<div class="card"><div class="fld"><label class="wide">How did it feel? What goes first next time?<textarea id="note" data-act="note" placeholder="e.g. rear hand dropped after the hook; pivot felt better on the left">'+esc(lg.note||'')+'</textarea></label>'
+ +'<div><div class="dim" style="font-size:12px;margin-bottom:6px">Session RPE (1–10)</div><div class="rpe">'+[1,2,3,4,5,6,7,8,9,10].map(i=>'<button data-act="rpe" data-v="'+i+'" aria-pressed="'+(lg.rpe===i)+'">'+i+'</button>').join('')+'</div></div>'
+ +'<div><div class="dim" style="font-size:12px;margin-bottom:6px">Technical quality (1–5)</div><div class="rpe">'+[1,2,3,4,5].map(i=>'<button data-act="q" data-v="'+i+'" aria-pressed="'+(lg.q===i)+'">'+i+'</button>').join('')+'</div></div></div>'
+ +'<div class="row" style="margin-top:14px"><button class="btn tape" data-act="complete">'+(complete?'Day logged · update':'Mark day complete')+'</button></div></div>';
+ h+='<div class="card"><b>Move to a different day</b><div class="row" style="margin-top:8px"><label class="dim" style="font-size:12px">Week<select id="goW" style="width:auto">'+WEEKS.map(w=>'<option value="'+w.n+'"'+(w.n===s.w?' selected':'')+'>'+w.n+' · '+esc(w.nm)+'</option>').join('')+'</select></label>'
+ +'<label class="dim" style="font-size:12px">Day<select id="goD" style="width:auto">'+DL.map((x,i)=>'<option value="'+i+'"'+(i===s.d?' selected':'')+'>'+x+'</option>').join('')+'</select></label><button class="btn" data-act="go">Go</button></div><p class="dim" style="font-size:12px;margin-top:8px">The day only moves when you finish it or change it here. Nothing is marked missed.</p></div></section>';
+ return h;
+}
+
+function vPlan(){
+ let h='<section class="sec"><h2>3 · Periodization</h2><p class="lead">Thirteen weeks in four phases. Each phase asks a different question of you. Weeks 4, 8 and 12 are deload and test weeks. Week 13 is the final integration, test and taper week.</p><div class="grid2">'
+ +PERIOD.map(p=>'<div class="card"><h3 style="font-size:20px;text-transform:uppercase">'+esc(p.n)+'</h3><div class="mono dim" style="font-size:11px">'+esc(p.w)+'</div><p style="margin-top:8px">'+esc(p.f)+'</p><p class="dim" style="margin-top:6px;font-size:13px">'+esc(p.s)+'</p></div>').join('')+'</div>';
+ h+='<h3>Deload and test weeks: exactly what changes</h3><div class="scroll"><table><tbody>'+DELOAD.map(d=>'<tr><td class="nw"><b>'+esc(d[0])+'</b></td><td>'+esc(d[1])+'</td></tr>').join('')+'</tbody></table></div></section>';
+ h+='<section class="sec"><h2>4 · Week by week</h2><p class="lead">Why this week differs from last week is the last column.</p><div class="scroll"><table class="minw"><thead><tr><th>Wk</th><th>Main technical goal</th><th>Main tactical goal</th><th>Conditioning goal</th><th>Strength / power goal</th><th>Main new challenge</th><th>Versus last week</th></tr></thead><tbody>'
+ +WEEKS.map(w=>'<tr'+(w.n===curWeek()?' class="hl"':'')+'><td class="nw"><b>'+w.n+'</b><br><span class="dim mono" style="font-size:10px">'+esc(w.md)+'</span></td>'+w.r.map(c=>'<td>'+esc(c)+'</td>').join('')+'<td>'+esc(w.chg)+'</td></tr>').join('')+'</tbody></table></div></section>';
+ h+='<section class="sec"><h2>5 · Weekly schedule</h2><div class="scroll"><table class="minw"><thead><tr><th>Day</th><th>Session</th><th>Purpose</th><th>Min</th><th>RPE</th><th>Class</th></tr></thead><tbody>'+SCHED.map(r=>'<tr><td class="nw"><b>'+r[0]+'</b></td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td class="nw">'+r[5]+'</td></tr>').join('')+'</tbody></table></div>'
+ +'<h3>Training load</h3><div class="card"><ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">'+LOADN.map(l=>'<li>'+esc(l)+'</li>').join('')+'</ul></div></section>';
+ h+='<section class="sec"><h2>What changed from Fight Camp 14</h2><div class="scroll"><table><tbody>'+CHANGES.map(d=>'<tr><td class="nw"><b>'+esc(d[0])+'</b></td><td>'+esc(d[1])+'</td></tr>').join('')+'</tbody></table></div></section>';
+ h+='<section class="sec"><h2>Equipment and labels</h2><div class="grid2"><div class="card"><h3 style="font-size:18px;text-transform:uppercase">1 · Required</h3><p class="dim" style="font-size:13px;margin-top:6px">About 2 × 2 m of floor, a towel, a sturdy table (tested, against a wall if possible), a chair that stays against a wall, a doorframe for balance and slips, a backpack with books or water bottles, shoes or a towel as range lines, a phone for video and this app. Nothing else is needed.</p></div><div class="card"><h3 style="font-size:18px;text-transform:uppercase">2 · Backpack load levels</h3><ul style="padding-left:18px;margin:6px 0 0;font-size:13px;display:flex;flex-direction:column;gap:4px">'+LOADLV.map(l=>'<li><b>'+l[0]+'</b> · '+esc(l[1])+'</li>').join('')+'</ul></div><div class="card"><h3 style="font-size:18px;text-transform:uppercase">3 · Partner, coach, gym</h3><p class="dim" style="font-size:13px;margin-top:6px">Heavy bag, pads, partner flow, coached clinch, supervised sparring, barbell work. Optional extras only, never required. '+esc(TAPENOTE)+'</p></div></div>'
+ +'<div class="row">'+Object.keys(TG).map(k=>'<span class="tg tg-'+k+'">'+TG[k]+'</span>').join('')+'</div>'
+ +'<h3>How hard is hard: effort and reps in reserve</h3><div class="scroll"><table><tbody>'+RPEG.map(r=>'<tr><td class="nw"><b>'+r[0]+'</b></td><td>'+esc(r[1])+'</td></tr>').join('')+'</tbody></table></div><p class="dim" style="font-size:13px">Major lifts end at RIR 1–2 in the hardest weeks, never at failure. Drop sets swap to an easier version of the same movement. Safety rules are in the Readiness tab.</p></section>';
+ h+='<section class="sec"><h2>What to expect</h2><div class="grid2">'+REAL.map(r=>'<div class="card"><h3 style="font-size:18px;text-transform:uppercase">'+esc(r[0])+'</h3><ul style="padding-left:18px;margin:8px 0 0;display:flex;flex-direction:column;gap:4px">'+r[1].map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>').join('')+'</div></section>';
+ return h;
+}
+function vAudit(){
+ return '<section class="sec"><h2>1 · Audit of the old program</h2><p class="lead">It was a fitness program dressed as a kickboxing program. The structure was easy to follow and nothing in it taught you to fight.</p>'
+ +AUDIT.map(a=>'<div class="card"><h3 style="font-size:19px;text-transform:uppercase">'+esc(a[0])+'</h3><p style="margin-top:6px">'+esc(a[1])+'</p></div>').join('')+'</section>'
+ +'<section class="sec"><h2>2 · What was missing</h2><div class="card"><ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px">'+MISSING.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul></div></section>';
+}
+function vSess(){
+ const w=S.sw||curWeek(),W=WEEKS[w-1];
+ let h='<section class="sec"><h2>6 · Detailed sessions</h2><div class="chips">'+WEEKS.map(x=>'<button class="chip'+(TESTW.includes(x.n)?' t':'')+'" data-act="sw" data-v="'+x.n+'" aria-pressed="'+(x.n===w)+'">W'+x.n+'</button>').join('')+'</div>'
+ +'<div class="card"><div class="row"><span class="pill tp">'+esc(PHN[W.ph])+'</span><span class="pill">'+W.md+'</span>'+(W.dl?'<span class="pill">DELOAD</span>':'')+'</div><h3 style="font-size:26px;text-transform:uppercase;margin-top:8px">Week '+W.n+' · '+esc(W.nm)+'</h3><p style="margin-top:6px">'+esc(W.chg)+'</p>'
+ +'<div class="scroll" style="margin-top:10px"><table><tbody>'+['Technical','Tactical','Conditioning','Strength / power','New challenge'].map((l,i)=>'<tr><td class="nw dim">'+l+'</td><td>'+esc(W.r[i])+'</td></tr>').join('')+'</tbody></table></div></div>';
+ for(let d=0;d<7;d++){
+  const di=(w-1)*7+d+1,s=sess(di);
+  h+='<details class="day"><summary><b>'+DL[d]+' · '+esc(s.title)+'</b><span class="mono dim" style="font-size:11px">'+s.dur+' min · RPE '+s.rpe+' · '+s.cls+'</span></summary><div class="inner"><p class="dim">'+esc(s.obj)+'</p>'+blocksH(s,false)+'</div></details>';
+ }
+ return h+'</section>';
+}
+function vSkills(){
+ return '<section class="sec"><h2>7 · Skill progression</h2><p class="lead">Open a skill to see what you learn (Weeks 1–4), add (5–8), make harder (9–12) and integrate (Week 13). Everything here is solo unless it says a partner or coach is required.</p>'
+ +SKILLS.map(s=>'<details class="skill"><summary>'+esc(s[0])+'</summary><div class="st4"><div><b>Weeks 1–4 · learn</b>'+esc(s[1])+'</div><div><b>Weeks 5–8 · add</b>'+esc(s[2])+'</div><div><b>Weeks 9–12 · harder</b>'+esc(s[3])+'</div><div><b>Week 13 · integrate</b>'+esc(s[4])+'</div></div></details>').join('')+'</section>';
+}
+function vMind(){
+ let h='<section class="sec"><h2>8 · Fight IQ</h2><p class="lead">Progression: what is distance, then can you recognise it, then can you manipulate it, then can you change your plan.</p><div class="scroll"><table class="minw"><thead><tr><th>Wk</th><th>Theme</th><th>Study task (Thursday) and how it enters Saturday</th></tr></thead><tbody>'
+ +WEEKS.map(w=>{const q=w.iq.split('|');return '<tr'+(w.n===curWeek()?' class="hl"':'')+'><td class="nw"><b>'+w.n+'</b></td><td class="nw">'+esc(q[0])+'</td><td>'+esc(q[1])+'</td></tr>'}).join('')+'</tbody></table></div>'
+ +'<h3>What to watch for when studying fights</h3><div class="scroll"><table><tbody>'+IQWATCH.map(r=>'<tr><td class="nw"><b>'+r[0]+'</b></td><td>'+esc(r[1])+'</td></tr>').join('')+'</tbody></table></div></section>';
+ h+='<section class="sec"><h2>10 · Mental training</h2><p class="lead">10–15 minutes every day, with a different focus each week. Format: 3 minutes breathing, then the weekly theme, then a 1-line note.</p><div class="scroll"><table class="minw"><thead><tr><th>Wk</th><th>Theme</th><th>Routine</th></tr></thead><tbody>'
+ +WEEKS.map(w=>{const q=w.me.split('|');return '<tr'+(w.n===curWeek()?' class="hl"':'')+'><td class="nw"><b>'+w.n+'</b></td><td class="nw">'+esc(q[0])+'</td><td>'+esc(q[1])+'</td></tr>'}).join('')+'</tbody></table></div></section>';
+ return h;
+}
+function vSC(){
+ let h='<section class="sec"><h2>9 · Strength, power and conditioning</h2><p class="lead">Tempo notation: down-pause-up in seconds. 2-0-X means 2 s down, no pause, up as fast as you can. Each exercise has a reason.</p>'
+ +'<div class="scroll"><table class="minw"><thead><tr><th>Exercises</th><th>Why they are here</th><th>Home version</th><th>Gym option</th></tr></thead><tbody>'+SCWHY.map(r=>'<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+' <span class="tg tg-g">GYM OPTIONAL</span></td></tr>').join('')+'</tbody></table></div>';
+ const cl=t=>t[0]+' · '+t[1]+'×'+t[2]+(t[7]==='leg'?'/leg':t[7]==='side'?'/side':'')+' · '+t[3]+' · '+(t[4]==='BW'?'BW':t[4])+(t[5]!==''&&t[5]!==undefined?' · RIR '+t[5]:'')+(t[6]?' · +drop':'');
+ const fam=FAMS.concat([CALF]);
+ h+='<h3>Strength ladders (Tuesday A–D, calves on Monday)</h3><p class="dim" style="font-size:13px">Pairs: A1 with A2, B1 with B2, C1 with C2. D after. Tempo is down-pause-up in seconds. BW = bodyweight, L1–L4 are backpack loads (see Plan). RIR = reps in reserve. Drop = a mechanical drop set on the last set.</p><div class="scroll"><table class="minw" style="font-size:12px"><thead><tr><th>Wk</th>'+['A1 Squat','A2 Pull','B1 Split','B2 Push','C1 Hinge','C2 Trunk','D Anti-rot.','Calves (Mon)'].map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'
+ +WEEKS.map((w,i)=>'<tr'+(w.n===curWeek()?' class="hl"':'')+'><td class="nw"><b>'+w.n+'</b></td>'+fam.map(f=>'<td>'+esc(cl(f.w[i]))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ h+='<h3>Power ladders (Friday)</h3><div class="scroll"><table class="minw" style="font-size:12px"><thead><tr><th>Wk</th><th>Vertical</th><th>Horizontal / lateral</th><th>Rotational</th><th>Upper</th></tr></thead><tbody>'
+ +WEEKS.map((w,i)=>'<tr'+(w.n===curWeek()?' class="hl"':'')+'><td class="nw"><b>'+w.n+'</b></td>'+PFAMS.map(f=>{const t=f.w[i];return '<td>'+esc(t[0]+' · '+t[1]+'×'+t[2]+' · rest '+t[3])+'</td>'}).join('')+'</tr>').join('')+'</tbody></table></div>'
+ +'<p class="dim">Power progresses by exercise type, then by contrast and reactivity. Low reps, full rest, about 50 ground contacts at most, every landing held for 2 s. Stop the set when height or speed drops. A max-speed striking item closes the block.</p>';
+ h+='<h3>Aerobic and conditioning by week</h3><div class="scroll"><table class="minw"><thead><tr><th>Wk</th><th>Aerobic (Tue)</th><th>Conditioning (Fri)</th><th>RPE Mon/Tue/Wed/Fri/Sat</th></tr></thead><tbody>'
+ +WEEKS.map(w=>{const a=w.aer.split('|');return '<tr'+(w.n===curWeek()?' class="hl"':'')+'><td class="nw"><b>'+w.n+'</b></td><td>'+esc(a[0]+': '+a[1])+'</td><td>'+w.con.map(c=>{const x=c.split('|');return esc(x[0]+': '+x[1])}).join('<br>')+'</td><td class="nw">'+w.rpe.join(' / ')+'</td></tr>'}).join('')+'</tbody></table></div>';
+ h+='<h3>Conditioning: energy systems and intensity</h3><div class="scroll"><table class="minw"><thead><tr><th>System</th><th>Intensity</th><th>How it is trained</th><th>Why</th><th>When</th></tr></thead><tbody>'+ENERGY.map(r=>'<tr><td><b>'+esc(r[0])+'</b></td><td class="nw">'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td></tr>').join('')+'</tbody></table></div>'
+ +'<p class="dim">Intensity classes: LOW = RPE 1–4, MODERATE = RPE 5–6, HIGH = RPE 7–8, MAXIMUM = RPE 9–10 and never more than 20 s at a time. High and maximum work happens on Tuesday (aerobic intervals) and Friday only.</p></section>';
+ return h;
+}
+function vSpar(){
+ return '<section class="sec"><h2>11 · Sparring progression</h2><p class="lead">The main program is solo. This is a six-stage progression using a scripted or cued imagined opponent. It teaches decisions, defence and ring geometry. It cannot teach you timing against a real person.</p>'
+ +'<div class="scroll"><table class="minw"><thead><tr><th>Stage</th><th>What it is</th><th>Rounds</th><th>RPE</th><th>Focus and avoid</th></tr></thead><tbody>'+SPAR.map(r=>'<tr><td class="nw"><b>'+esc(r[0])+'</b><br><span class="tg tg-s">'+TG.s+'</span></td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td></tr>').join('')+'</tbody></table></div>'
+ +'<h3>Optional real sparring path (not required)</h3><div class="scroll"><table class="minw"><thead><tr><th>Step</th><th>Format</th><th>RPE</th><th>Notes</th></tr></thead><tbody>'+SPAR_OPT.map((r,i)=>'<tr><td class="nw"><b>'+esc(r[0])+'</b><br><span class="tg tg-'+(i===0?'p':'c')+'">'+TG[i===0?'p':'c']+'</span></td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td></tr>').join('')+'</tbody></table></div>'
+ +'<h3>Rules</h3><div class="card"><ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px">'+SPAR_RULES.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div></section>';
+}
+function cpIndex(){const w=curWeek();let k=0;TESTW.forEach((t,i)=>{if(w>=t)k=i});return k}
+function vTests(){
+ const cur=cpIndex();
+ let h='<section class="sec"><h2>12 · Testing and scorecard</h2><p class="lead">Five checkpoints: start (Week 1), Week 4, Week 8, Week 12, Week 13 (final). Enter each result on the day shown in the session. Change is first entry to latest. Green means better.</p>';
+ Object.keys(TCAT).forEach(cat=>{
+  h+='<h3>'+TCAT[cat]+' tests</h3><div class="scroll"><table class="minw"><thead><tr><th>Test</th>'+TESTW.map((w,i)=>'<th>'+(i===0?'Start':'W'+w)+'</th>').join('')+'<th>Change</th></tr></thead><tbody>'
+  +TESTS.filter(t=>t.cat===cat).map(t=>{
+   const vals=TESTW.map((w,i)=>{const v=(S.tests[i]||{})[t.id];return v===undefined||v===''?null:+v});
+   const f=vals.find(v=>v!==null),l=[...vals].reverse().find(v=>v!==null);
+   let ch='';
+   if(f!==undefined&&f!==null&&l!==null&&vals.filter(v=>v!==null).length>1){
+    const d=Math.round((l-f)*100)/100,good=d*t.dir>0,bad=d*t.dir<0;
+    ch='<b style="color:'+(good?'var(--ok)':bad?'var(--bad)':'var(--dim)')+'">'+(d>0?'+':'')+d+' '+esc(t.u)+'</b>';
+   }
+   return '<tr><td style="min-width:240px"><b>'+esc(t.n)+'</b> <span class="mono dim" style="font-size:10px">'+esc(t.u)+'</span><div class="dim" style="font-size:12px;margin-top:3px">'+esc(t.how)+'</div><span class="tg tg-'+t.tag+'">'+TG[t.tag]+'</span></td>'
+   +TESTW.map((w,i)=>'<td'+(i===cur?' style="background:color-mix(in srgb,var(--tape) 14%,transparent)"':'')+'><input class="tin" type="number" step="any" inputmode="decimal" data-act="test" data-cp="'+i+'" data-id="'+t.id+'" aria-label="'+esc(t.n)+' '+(i===0?'start':'week '+w)+'" value="'+(vals[i]===null?'':vals[i])+'"></td>').join('')+'<td class="nw">'+ch+'</td></tr>';
+  }).join('')+'</tbody></table></div>';
+ });
+ return h+'</section>';
+}
+function vAuto(){
+ return '<section class="sec"><h2>13 · Autoregulation</h2><p class="lead">Run the readiness check on the Today tab before every session. Six answers give a score. Pain and red flags override the score.</p>'
+ +'<div class="scroll"><table class="minw"><thead><tr><th>Colour</th><th>When</th><th>What to do</th></tr></thead><tbody>'+AUTO.map(r=>'<tr><td class="nw"><span class="st '+r[0]+'" style="padding:3px 10px;display:inline-block"><b style="font-size:16px">'+r[0]+'</b></span></td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td></tr>').join('')+'</tbody></table></div>'
+ +'<div class="card"><b>Scoring</b><p class="dim" style="margin-top:6px">Sleep, soreness, energy, motivation and resting heart rate each score 0 to 3 (sleep and heart rate to 2). Add them. Pain 2 or more, severe soreness, or any red flag is RED regardless of score. RPE rule: if your last two sessions each ran 2 or more RPE above plan, today is YELLOW.</p></div>'
+ +'<h2 style="margin-top:18px">Safety: normal discomfort versus stop-pain</h2><div class="grid2"><div class="card"><b style="color:var(--ok)">Normal. Keep going.</b><ul style="padding-left:18px;margin:8px 0 0;font-size:13px">'+SAFE_OK.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div><div class="card"><b style="color:var(--bad)">Stop. End the session.</b><ul style="padding-left:18px;margin:8px 0 0;font-size:13px">'+SAFE_STOP.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div></div><div class="card"><b>Setup and limits</b><ul style="padding-left:18px;margin:8px 0 0;font-size:13px">'+SAFE_SETUP.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>'
+ +'<div class="card"><b>Resting heart rate</b><p class="dim" style="margin-top:6px">Take your pulse for 60 s before getting out of bed for 3 mornings in Week 1 and average it. That is your baseline. Skip the field if you do not track it.</p></div></section>';
+}
+function vLog(){
+ const ls=Object.keys(S.logs).map(Number).filter(d=>S.logs[d].at).sort((a,b)=>a-b);
+ const st=streaks();
+ const train=ls.filter(d=>DT[(d-1)%7]!=='sun'&&DT[(d-1)%7]!=='thu');
+ const rp=ls.map(d=>S.logs[d].rpe).filter(x=>x>0);
+ const avg=rp.length?(rp.reduce((a,b)=>a+b,0)/rp.length).toFixed(1):'–';
+ const wc=new Array(14).fill(0);ls.forEach(d=>{wc[wkOf(d)]++});
+ let h='<section class="sec"><h2>14 · Training log</h2><div class="stats card"><div class="stat"><b>'+ls.length+'</b><span>days logged of '+TOTAL+'</span></div><div class="stat"><b>'+train.length+'</b><span>training sessions</span></div><div class="stat"><b>'+st.cur+'</b><span>current streak (days)</span></div><div class="stat"><b>'+st.best+'</b><span>best streak</span></div><div class="stat"><b>'+avg+'</b><span>average session RPE</span></div></div>'
+ +'<div><div class="dim" style="font-size:12px;margin-bottom:6px">Days logged per week (max 7). Gold = deload or test week.</div><div class="bars">'+WEEKS.map(w=>'<div class="'+(w.dl?'dl':'')+'"><i style="height:'+(wc[w.n]/7*100)+'%"></i></div>').join('')+'</div></div>';
+ h+='<div class="cal">';
+ for(let w=1;w<=13;w++){
+  h+='<div class="wl">Week '+w+' · '+esc(WEEKS[w-1].nm)+'</div>';
+  for(let d=0;d<7;d++){const di=(w-1)*7+d+1;h+='<div class="c'+(S.logs[di]&&S.logs[di].at?' d':'')+(di===S.day?' n':'')+'" title="Day '+di+'">'+DAB[DT[d]]+'</div>'}
+ }
+ h+='</div><p class="dim mono" style="font-size:11px">TE technical · ST strength · DF defence · RC recovery · PW power · SC scenario · OF off</p>';
+ h+='<h3>Recent entries</h3>'+(ls.length?ls.slice().reverse().slice(0,12).map(d=>{const l=S.logs[d],s=sess(d);return '<div class="card"><div class="row" style="justify-content:space-between"><b>Day '+d+' · '+DL[(d-1)%7]+' · '+esc(s.title)+'</b><span class="mono dim" style="font-size:11px">'+esc(l.date||'')+'</span></div><div class="mono dim" style="font-size:11px">RPE '+(l.rpe||'–')+' · quality '+(l.q||'–')+' · '+(l.done||[]).length+' items</div>'+(l.note?'<p style="margin-top:6px">'+esc(l.note)+'</p>':'')+'</div>'}).join(''):'<p class="dim">No completed days yet.</p>');
+ h+='<h3>Backup</h3><div class="card"><p class="dim" style="font-size:13px">Progress is stored in this browser only. Copy the backup text and keep it somewhere safe. To restore, paste it back and load it.</p><textarea id="bk" style="min-height:90px;margin-top:8px;font-family:var(--mono);font-size:11px"></textarea><div class="row" style="margin-top:8px"><button class="btn" data-act="bkshow">Show backup</button><button class="btn" data-act="bkcopy">Copy</button><button class="btn" data-act="bkload">Load pasted backup</button></div><div id="bkmsg" class="dim mono" style="font-size:11px;margin-top:6px"></div></div></section>';
+ return h;
+}
+function vRev(){
+ const w=S.rw||Math.min(curWeek(),13),R=S.rev[w]||{};
+ const days=[];for(let d=1;d<=7;d++)days.push((w-1)*7+d);
+ const done=days.filter(d=>S.logs[d]&&S.logs[d].at),rp=done.map(d=>S.logs[d].rpe).filter(x=>x>0);
+ const avg=rp.length?(rp.reduce((a,b)=>a+b,0)/rp.length).toFixed(1):'–';
+ const f=(k,l,t)=>'<label class="'+(t==='ta'?'wide':'')+'">'+l+(t==='ta'?'<textarea data-act="rv" data-k="'+k+'">'+esc(R[k]||'')+'</textarea>':'<input type="text" data-act="rv" data-k="'+k+'" value="'+esc(R[k]||'')+'">')+'</label>';
+ return '<section class="sec"><h2>15 · Weekly review</h2><div class="chips">'+WEEKS.map(x=>'<button class="chip'+(TESTW.includes(x.n)?' t':'')+'" data-act="rw" data-v="'+x.n+'" aria-pressed="'+(x.n===w)+'">W'+x.n+'</button>').join('')+'</div>'
+ +'<div class="stats card"><div class="stat"><b>'+done.length+' / 7</b><span>days logged in week '+w+'</span></div><div class="stat"><b>'+avg+'</b><span>average RPE</span></div><div class="stat"><b>'+(WEEKS[w-1].dl?'Deload':'Build')+'</b><span>'+esc(WEEKS[w-1].nm)+'</span></div></div>'
+ +'<div class="card"><div class="fld">'+f('sleep','Average sleep per night (hours)')+f('energy','Average energy, 1 to 5')+f('niggles','Pain or niggles (where, how bad)')
+ +'<label>Next week\'s decision<select data-act="rv" data-k="dec"><option value="">choose</option>'+['Continue as planned','Hold this week again','Drop volume by a third'].map(o=>'<option'+(R.dec===o?' selected':'')+'>'+o+'</option>').join('')+'</select></label>'
+ +f('win','Best moment this week','ta')+f('leak','Biggest leak (the thing that kept failing)','ta')+f('fix','One change for next week','ta')+'</div></div>'
+ +'<div class="card"><b>Review prompts</b><ul style="margin:6px 0 0;padding-left:18px;color:var(--dim)"><li>Did the guard come back on every Friday round?</li><li>Which cue did you hesitate on most?</li><li>Which session did you most want to skip, and why?</li></ul></div></section>';
+}
+function vRules(){return '<section class="sec"><h2>16 · The 20 rules</h2><ol class="rules">'+RULES.map(r=>'<li><span>'+esc(r)+'</span></li>').join('')+'</ol></section>'}
+
+const TABS=[['today','Today',vToday],['plan','Plan',vPlan],['sess','Sessions',vSess],['skills','Skills',vSkills],['mind','IQ & Mind',vMind],['sc','S&C',vSC],['spar','Sparring',vSpar],['tests','Tests',vTests],['auto','Readiness',vAuto],['log','Log',vLog],['rev','Review',vRev],['rules','Rules',vRules],['audit','Audit',vAudit]];
+
+function tapeH(){
+ const cw=curWeek();
+ let seg='',lb='';
+ WEEKS.forEach(w=>{
+  const past=S.day>w.n*7;
+  seg+='<div class="seg p'+(w.ph===0?'1':'')+(past?' done':'')+(w.n===cw&&S.day<=TOTAL?' cur':'')+(TESTW.includes(w.n)?' test':'')+'" title="Week '+w.n+' · '+esc(w.nm)+'"></div>';
+  lb+='<span>'+w.n+'</span>';
+ });
+ const st=streaks();
+ return '<div class="tape" aria-hidden="true">'+seg+'</div><div class="tapelbl" aria-hidden="true">'+lb+'</div><div class="tapemeta"><span>'+(S.day>TOTAL?'Program complete':'Day '+S.day+' of '+TOTAL+' · Week '+cw+' · '+esc(PHN[WEEKS[cw-1].ph]))+'</span><span>Streak '+st.cur+' · hatched = test week</span></div>';
+}
+function render(){
+ $('#tapeWrap').innerHTML=tapeH();
+ $('#tabs').innerHTML=TABS.map(t=>'<button role="tab" data-act="tab" data-v="'+t[0]+'" aria-selected="'+(S.tab===t[0])+'">'+t[1]+'</button>').join('');
+ const t=TABS.find(x=>x[0]===S.tab)||TABS[0];
+ $('#view').innerHTML=t[2]();
+}
+
+/* ---------- events ---------- */
+function ensureLog(){return S.logs[S.day]||(S.logs[S.day]={done:[],note:'',rpe:0,q:0})}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-act]');if(!b)return;
+ const a=b.getAttribute('data-act'),v=b.getAttribute('data-v'),id=b.getAttribute('data-id');
+ if(a==='tab'){S.tab=v;save();render();window.scrollTo(0,0)}
+ else if(a==='ck'){const l=ensureLog(),i=l.done.indexOf(id);if(i<0)l.done.push(id);else l.done.splice(i,1);save();render()}
+ else if(a==='how'){if(OPEN.has(id))OPEN.delete(id);else OPEN.add(id);const c=document.getElementById('cue_'+id);if(c)c.classList.toggle('open')}
+ else if(a==='tm'){const s=sess(S.day);let f=null;s.blocks.forEach(bl=>bl.items.forEach(x=>{if(x.id===id)f=x}));if(f)openTimer(f)}
+ else if(a==='rpe'){ensureLog().rpe=+v;save();render()}
+ else if(a==='q'){ensureLog().q=+v;save();render()}
+ else if(a==='complete'){
+  const l=ensureLog(),first=!l.at;l.at=new Date().toISOString();l.date=ld(new Date());
+  const ta=$('#note');if(ta)l.note=ta.value;
+  if(first&&S.day<=TOTAL)S.day=S.day+1;
+  save();render();window.scrollTo(0,0);
+ }
+ else if(a==='go'){S.day=(+$('#goW').value-1)*7+(+$('#goD').value)+1;save();render();window.scrollTo(0,0)}
+ else if(a==='sw'){S.sw=+v;render()}
+ else if(a==='rw'){S.rw=+v;render()}
+ else if(a==='bkshow'){$('#bk').value=JSON.stringify(S)}
+ else if(a==='bkcopy'){const t=$('#bk');if(!t.value)t.value=JSON.stringify(S);t.select();let ok=false;try{navigator.clipboard.writeText(t.value).then(()=>{$('#bkmsg').textContent='Copied.'},()=>{$('#bkmsg').textContent='Copy blocked. The text is selected, copy it manually.'});ok=true}catch(er){}if(!ok)$('#bkmsg').textContent='Text selected, copy it manually.'}
+ else if(a==='bkload'){try{const p=JSON.parse($('#bk').value);if(!p||typeof p.logs!=='object'||!p.day)throw new Error('bad');S=p;S.rdy=S.rdy||{};S.tests=S.tests||{};S.rev=S.rev||{};save();render();$('#bkmsg').textContent='Loaded.'}catch(er){$('#bkmsg').textContent='That is not a valid backup.'}}
+});
+document.addEventListener('change',e=>{
+ const el=e.target,a=el.getAttribute('data-act');if(!a)return;
+ if(a==='rdy'){const r=S.rdy[S.day]||(S.rdy[S.day]={sl:0,so:0,en:0,mo:0,pn:0,hr:0});r[el.getAttribute('data-k')]=+el.value;save();render()}
+ else if(a==='rf'){const r=S.rdy[S.day]||(S.rdy[S.day]={sl:0,so:0,en:0,mo:0,pn:0,hr:0});r.rf=el.checked;save();render()}
+ else if(a==='test'){const cp=el.getAttribute('data-cp'),id=el.getAttribute('data-id');(S.tests[cp]=S.tests[cp]||{})[id]=el.value;save();render()}
+ else if(a==='rv'){const w=S.rw||Math.min(curWeek(),13);(S.rev[w]=S.rev[w]||{})[el.getAttribute('data-k')]=el.value;save()}
+});
+document.addEventListener('input',e=>{
+ const el=e.target;
+ if(el.getAttribute('data-act')==='note'){ensureLog().note=el.value;try{localStorage.setItem('fc13',JSON.stringify(S))}catch(er){}}
+});
+$('#themeBtn').addEventListener('click',()=>{S.theme=S.theme===null?'light':S.theme==='light'?'dark':null;applyTheme();save()});
+
+/* ---------- timer ---------- */
+let TM=null,tick=null,snd=true,voice=true,ctx=null,lock=null;
+function beep(f,ms){
+ if(!snd)return;
+ try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f;g.gain.value=.25;o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+ms/1000)}catch(e){}
+ try{if(navigator.vibrate)navigator.vibrate(ms>300?[200,80,200]:60)}catch(e){}
+}
+function say(t){
+ if(!voice)return;
+ try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/·/g,',').replace(/[+→]/g,' then ').toLowerCase());u.rate=1.1;speechSynthesis.speak(u)}catch(e){}
+}
+const fmt=t=>Math.floor(t/60)+':'+pad(t%60);
+function tmStart(ph,round,dur){
+ TM.ph=ph;TM.round=round;TM.end=Date.now()+dur*1000;TM.lastSec=null;TM.paused=false;
+ TM.show='';TM.cue='BURST';
+ const t=TM.it.timer;
+ if(ph==='work'&&t.cue){TM.cueAt=Date.now()+1500}else TM.cueAt=0;
+ beep(ph==='work'?1000:ph==='rest'?600:800,ph==='work'?500:250);
+}
+function nextCue(){
+ const t=TM.it.timer,c=CUES[t.cue];let txt;
+ const gap=(t.cmin+Math.random()*Math.max(0,t.cmax-t.cmin))*1000;
+ if(t.cue==='tempo'){txt=TM.cue==='BURST'?'CRUISE':'BURST';TM.cueAt=Date.now()+(txt==='BURST'?gap:6000)}
+ else{let n=0;do{txt=c.list[Math.floor(Math.random()*c.list.length)];n++}while(txt===TM.cue&&c.list.length>1&&n<20);TM.cueAt=Date.now()+gap}
+ TM.cue=txt;TM.show=txt;say(txt);beep(900,120);
+}
+function tmDraw(){
+ const left=Math.max(0,Math.ceil((TM.end-Date.now())/1000)),ov=$('#tmOv');
+ ov.className='open '+TM.ph;
+ const t=TM.it.timer;
+ $('#tmPhase').textContent=TM.ph==='ready'?'GET READY':TM.ph==='work'?(t.work>=60?'FIGHT':'GO'):TM.ph==='rest'?'REST':'DONE';
+ $('#tmClock').textContent=TM.ph==='done'?'✓':fmt(TM.paused?Math.ceil(TM.left):left);
+ $('#tmRound').textContent=TM.ph==='done'?'All rounds complete':'Round '+TM.round+' of '+t.rounds+' · '+fmt(t.work)+' work · '+t.rest+' s rest';
+ $('#tmCue').textContent=TM.ph==='work'?TM.show:'';
+ $('#tmMap').textContent=t.cue&&(TM.ph==='ready'||TM.ph==='rest')?CUES[t.cue].map:'';
+ $('#tmPause').textContent=TM.ph==='done'?'Finish':TM.paused?'Resume':'Pause';
+ return left;
+}
+function tmAdv(){
+ const t=TM.it.timer;
+ if(TM.ph==='ready')tmStart('work',1,t.work);
+ else if(TM.ph==='work'){if(TM.round>=t.rounds||t.rest===0){TM.ph='done';beep(800,700)}else tmStart('rest',TM.round,t.rest)}
+ else if(TM.ph==='rest')tmStart('work',TM.round+1,t.work);
+}
+function tmLoop(){
+ if(!TM||TM.paused||TM.ph==='done')return;
+ const left=tmDraw();
+ if(TM.ph==='work'&&TM.cueAt&&Date.now()>=TM.cueAt){nextCue();tmDraw()}
+ if(left<=3&&left>0&&TM.lastSec!==left){TM.lastSec=left;beep(700,120)}
+ if(Date.now()>=TM.end){tmAdv();tmDraw()}
+}
+function openTimer(it0){
+ TM={it:it0};tmStart('ready',1,5);
+ $('#tmName').textContent=it0.name;
+ clearInterval(tick);tick=setInterval(tmLoop,200);tmDraw();
+ try{if(navigator.wakeLock)navigator.wakeLock.request('screen').then(l=>{lock=l}).catch(()=>{})}catch(e){}
+}
+function closeTimer(){
+ clearInterval(tick);TM=null;$('#tmOv').className='';
+ try{speechSynthesis.cancel()}catch(e){}
+ try{if(lock){lock.release();lock=null}}catch(e){}
+}
+$('#tmPause').addEventListener('click',()=>{
+ if(!TM)return;
+ if(TM.ph==='done'){const l=ensureLog();if(l.done.indexOf(TM.it.id)<0)l.done.push(TM.it.id);save();closeTimer();render();return}
+ if(TM.paused){TM.end=Date.now()+TM.left*1000;TM.paused=false;if(TM.ph==='work'&&TM.cueAt)TM.cueAt=Date.now()+1500}
+ else{TM.left=Math.max(0,(TM.end-Date.now())/1000);TM.paused=true}
+ tmDraw();
+});
+$('#tmSkip').addEventListener('click',()=>{if(TM&&TM.ph!=='done'){tmAdv();tmDraw()}});
+$('#tmRestart').addEventListener('click',()=>{if(TM){tmStart('ready',1,5);tmDraw()}});
+$('#tmClose').addEventListener('click',closeTimer);
+$('#tmSnd').addEventListener('click',e=>{snd=!snd;e.target.textContent='Sound: '+(snd?'on':'off')});
+$('#tmVoice').addEventListener('click',e=>{voice=!voice;e.target.textContent='Voice: '+(voice?'on':'off');if(!voice){try{speechSynthesis.cancel()}catch(er){}}});
+
+applyTheme();
+render();
+})();
+</script>
+
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
+</body>
+</html>
